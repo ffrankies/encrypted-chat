@@ -16,6 +16,7 @@ public class ClientGUI extends JFrame {
     public ClientGUI() {
         
         super();
+        setVisible(true);
         
     }
     
