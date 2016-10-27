@@ -16,6 +16,7 @@ public class ClientGUI extends JFrame {
     public ClientGUI() {
         
         super();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
     }
