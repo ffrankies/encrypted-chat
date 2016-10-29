@@ -139,6 +139,8 @@ public class Client {
     public void sendMessage(String message) {
         
         // To-Do
+        // For testing purposes ONLY - this code should be rewritten
+        output.println(message);
         
     }
     

@@ -153,8 +153,6 @@ public class Server {
         @Override
         public void run() {
             
-            System.out.println("New client connected to server.");
-            
             BufferedReader input = null;
             try {
                 input = new BufferedReader(new InputStreamReader(
@@ -175,6 +173,9 @@ public class Server {
                 System.exit(1);
             }
             
+            System.out.println("Client " + clientName + " connected to the "
+                + "server.");
+            
             clientThreads.put(clientName, thread);
             clientSockets.put(clientName, clientSocket);
             
@@ -187,7 +188,7 @@ public class Server {
                     e.printStackTrace();
                     System.exit(1);
                 }
-                System.out.println("Message.");
+                System.out.println(message);
             }
             
         }
