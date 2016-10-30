@@ -13,18 +13,29 @@ public class ClientGUI extends JFrame {
      * 
      */
      
+    /*****************************************************
+     * The JTextArea to display the other client's message.
+     ******************************************************/
+    private JTextArea otherClientMessage; 
+    
+    
+    JTextField clientText;
+     
     public ClientGUI() {
         
         super();
+        
+        
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
     }
     
-    public static void main(String [] args) {
+    // public static void main(String [] args) {
         
-        System.out.println("This is the Client's GUI.");
+    //     System.out.println("This is the Client's GUI.");
         
-    }
+    // }
     
 }

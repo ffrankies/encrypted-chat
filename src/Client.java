@@ -56,7 +56,7 @@ public class Client {
     
     /*
      * The message structure
-     * @code @param [@message]
+     * @code @param(s) [@message]
      * @code tells the Server how to process the message
      * @param is usually the ID/name of other client
      * @message is not used in all codes
@@ -139,10 +139,12 @@ public class Client {
      *************************************************************************/
     public void sendMessage(String message) {
         
-        // To-Do
-        // For testing purposes ONLY - this code should be rewritten
+        /*
+         * Message format:
+         * @SEND @SenderName/ID message \n
+         */
         try {
-            output.writeBytes(message + "\n");
+            output.writeBytes(SEND + "@" + name + " " + message + "\n");
         } catch (IOException e) {
             System.err.println("Could not send message to server.");
             e.printStackTrace();
@@ -172,6 +174,22 @@ public class Client {
             e.printStackTrace();
             return;
         }
+    }
+    
+    /**************************************************************************
+     * Receives a message sent from the server/other Client.
+     * @return a String containing the message sent
+     *************************************************************************/
+    public String receiveMessage() {
+        String message = "";
+        try {
+            message = input.readLine();
+        } catch (IOException e) {
+            System.err.println("Could not get message from Server/other "
+                + "Client.");
+            e.printStackTrace();
+        }
+        return message;
     }
     
     // public static void main(String[] args) {

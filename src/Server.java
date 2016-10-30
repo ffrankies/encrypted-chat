@@ -4,11 +4,13 @@ import java.net.Socket;
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.DataOutputStream;
 
 import java.nio.channels.IllegalBlockingModeException;
 
 //import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.Enumeration;
 
 /******************************************************************************
  * A simple chat server.
@@ -150,6 +152,13 @@ public class Server {
             this.thread = thread;
         }
         
+        private void sendClientList() {
+            Enumeration<String> clientList = clientSockets.keys();
+            // Convert clientList to JSON
+            // Get all the sockets currently connected
+            // Send the JSON string across to all the clients
+        }
+        
         @Override
         public void run() {
             
@@ -189,6 +198,32 @@ public class Server {
                     System.exit(1);
                 }
                 System.out.println(message);
+                String command = message.substring(0, message.indexOf(" "));
+                if (command.equals("@send")) {
+                    for (Enumeration<Socket> s = clientSockets.elements(); 
+                         s.hasMoreElements(); ) {
+                        Socket thisSocket = s.nextElement();
+                        if (!clientSocket.equals(thisSocket)) {
+                            DataOutputStream output = null;
+                            try {
+                                output = new DataOutputStream(
+                                    thisSocket.getOutputStream());
+                            } catch (IOException e) {
+                                System.err.println("Could not create data "
+                                    + "output stream to Cleint.");
+                                e.printStackTrace();
+                            }
+                            try {
+                                output.writeBytes(message + "\n");
+                            } catch (IOException e) {
+                                System.err.println("Could not send data to "
+                                    + "client.");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    System.out.println("Done looping through enumeration.");
+                }
             }
             
         }
