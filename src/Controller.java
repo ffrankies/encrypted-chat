@@ -56,7 +56,7 @@ public class Controller implements ActionListener {
         System.out.println("Client connected to server.");
         
         // Creates a thread that listens to messages from the Server.
-        new Thread(new ClientListener(client));
+        new Thread(new ClientListener(client)).start();
         
         while (true) {
             System.out.println("Enter a message: ");
