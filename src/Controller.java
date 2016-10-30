@@ -28,12 +28,12 @@ public class Controller implements ActionListener {
          * messages.
          *********************************************************************/
         public ClientListener(Client client) {
+            super();
             this.client = client;
         }
         
         @Override
         public void run() {
-            
             while (true) {
                 String message = client.receiveMessage();
                 System.out.println(message);
