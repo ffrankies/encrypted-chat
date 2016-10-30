@@ -210,7 +210,7 @@ public class Server {
                                     thisSocket.getOutputStream());
                             } catch (IOException e) {
                                 System.err.println("Could not create data "
-                                    + "output stream to Cleint.");
+                                    + "output stream to Client.");
                                 e.printStackTrace();
                             }
                             try {
