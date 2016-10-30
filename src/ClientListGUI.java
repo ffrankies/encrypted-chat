@@ -1,4 +1,6 @@
-    import javax.swing.*;
+    import javax.swing.JPanel;
+    import javax.swing.JScrollPane;
+    import javax.swing.JCheckBox;
     
     public class ClientListGUI extends JPanel {
         

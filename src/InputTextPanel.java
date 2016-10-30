@@ -11,14 +11,14 @@
         private JButton send;
         
         
-        public InputTextPanel(){
+        public InputTextPanel(JButton send){
             super();
             
             setLayout(new GridLayout(1,2));
             
             clientText = new JTextField();
             
-            send = new JButton("Send");
+            this.send = send;
             
             add(send);
             
