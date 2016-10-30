@@ -1,5 +1,7 @@
 import javax.swing.*;
 
+import java.awt.BorderLayout;
+
 public class ClientGUI extends JFrame {
     
     /**
@@ -19,8 +21,6 @@ public class ClientGUI extends JFrame {
     
     /** Panel for entering local client's message */
     private InputTextPanel input;
-    
-    
      
     public ClientGUI() {
         
@@ -34,8 +34,10 @@ public class ClientGUI extends JFrame {
         
         setSize(500, 500);
         
-        add(incoming);
-        add(input);
+        setLayout(new BorderLayout());
+        
+        add(incoming, BorderLayout.CENTER);
+        add(input, BorderLayout.SOUTH);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         

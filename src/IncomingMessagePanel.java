@@ -17,8 +17,6 @@ public class IncomingMessagePanel extends JPanel {
         
         myScrollPane = new JScrollPane(myTextArea);
         
-        add(myTextArea);
-        
         add(myScrollPane);
         
         setVisible(true);
