@@ -24,7 +24,7 @@ public class ClientGUI extends JFrame {
     /** Panel for the admin commands. */
     private Administration admin;
     
-    JButton send = new JButton("Send");
+    //JButton send = new JButton("Send");
      
     public ClientGUI(String name) {
         
@@ -32,7 +32,7 @@ public class ClientGUI extends JFrame {
         
         incoming = new IncomingMessagePanel();
         
-        input = new InputTextPanel(send);
+        input = new InputTextPanel();
         
         admin = new Administration();
         
@@ -52,7 +52,7 @@ public class ClientGUI extends JFrame {
     
     /** Allows access to send button. */
     public JButton getSendButton() {
-        return this.send;
+        return this.input.getSendButton();
     }
     
     /** Allows access to text field. */
