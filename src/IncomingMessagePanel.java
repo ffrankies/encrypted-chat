@@ -3,9 +3,6 @@ import javax.swing.*;
 
 public class IncomingMessagePanel extends JPanel {
     
-    /** The panel to contain the text area for incoming messages */
-    private JPanel myPanel;
-    
     /** A scroll pane for the panel. */
     private JScrollPane myScrollPane;
     
@@ -16,14 +13,15 @@ public class IncomingMessagePanel extends JPanel {
         
         super();
         
-        
         myTextArea = new JTextArea();
-        
-        myPanel = new JPanel();
         
         myScrollPane = new JScrollPane(myTextArea);
         
-        myPanel.add(myTextArea);
+        add(myTextArea);
+        
+        add(myScrollPane);
+        
+        setVisible(true);
         
     }
     

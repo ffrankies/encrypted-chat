@@ -59,6 +59,9 @@ public class Server {
     /** The kick code - kicks a specified client off the chat. */
     private static final String KICK = "@kick";
     
+    /** The client list code - sends list of clients to all clients. */
+    private static final String CLIENTLIST = "@clientlist";
+    
     /** 
      * A map using client names as keys and client sockets as values.
      * Contains all the currently connected clients.
@@ -152,11 +155,32 @@ public class Server {
             this.thread = thread;
         }
         
+        /**********************************************************************
+         * Sends a list of all currently connected clients to all Clients.
+         *********************************************************************/
         private void sendClientList() {
-            Enumeration<String> clientList = clientSockets.keys();
-            // Convert clientList to JSON
-            // Get all the sockets currently connected
-            // Send the JSON string across to all the clients
+            
+            // Get all currently connected client names
+            String clientList = "";
+            for (Enumeration<String> clients = clientSockets.keys(); 
+                 clients.hasMoreElements(); ) {
+                clientList += clients.nextElement() + ",";         
+            }
+            clientList = CLIENTLIST + " " + clientList;
+            
+            for (Enumeration<DataOutputStream> outputs = 
+                 clientSockets.elements(); outputs.hasMoreElements(); ) {
+                DataOutputStream thisOutput = outputs.nextElement();
+                try {
+                    thisOutput.writeBytes(clientList + "\n");
+                } catch (IOException e) {
+                    System.err.println("Could not send client list to client.");
+                    e.printStackTrace();
+                } 
+            }
+            
+            System.out.println("Sent clientList to all clients.");
+            
         }
         
         @Override
@@ -198,6 +222,8 @@ public class Server {
             clientThreads.put(clientName, thread);
             clientSockets.put(clientName, output);
             
+            sendClientList();
+            
             while (true) {
                 String message = "";
                 try {
@@ -210,13 +236,13 @@ public class Server {
                 System.out.println(message);
                 String command = message.substring(0, message.indexOf(" "));
                 if (command.equals("@send")) {
-                    for (Enumeration<DataOutputStream> s = 
-                        clientSockets.elements(); s.hasMoreElements(); ) {
-                        DataOutputStream thisSocket = s.nextElement();
-                        if (!output.equals(thisSocket)) {
+                    for (Enumeration<DataOutputStream> outputs = 
+                        clientSockets.elements(); outputs.hasMoreElements(); ) {
+                        DataOutputStream thisOutput = outputs.nextElement();
+                        if (!output.equals(thisOutput)) {
                             System.out.println("Sending message.");
                             try {
-                                thisSocket.writeBytes(message + "\n");
+                                thisOutput.writeBytes(message + "\n");
                             } catch (IOException e) {
                                 System.err.println("Could not send data to "
                                     + "client.");

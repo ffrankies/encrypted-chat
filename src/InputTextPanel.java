@@ -3,8 +3,6 @@
     
     public class InputTextPanel extends JPanel {
         
-        /** Panel to contain input text field and send button. */
-        private JPanel inputPanel;
         
         /** Texfield for the client to input text. */
         private JTextField clientText;
@@ -16,23 +14,19 @@
         public InputTextPanel(){
             super();
             
-            inputPanel = new JPanel();
-            
-            inputPanel.setLayout(new GridLayout(1,2));
+            setLayout(new GridLayout(1,2));
             
             clientText = new JTextField();
             
             send = new JButton("Send");
             
-            inputPanel.add(send);
+            add(send);
             
-            inputPanel.add(clientText);
+            add(clientText);
+            
+            setVisible(true);
         }
         
-        public static void main (String [] args){
-            
-            
-        }
     }
     
     

@@ -1,0 +1,32 @@
+    import javax.swing.*;
+    
+    public class ClientListGUI extends JPanel {
+        
+        
+        /** Scroll pane for having too many clients for the display. */
+        JScrollPane scroll; 
+        
+        // /** Array to be used for the name of clients sent by the server. */
+        // String [] clientNames;
+        
+        public ClientListGUI(){
+            
+            scroll = new JScrollPane();
+            
+        }
+        
+        /****************************************************************
+         * Instatiating the butttons based on the names passed by the GUI
+         ****************************************************************/
+         public void updatePanel(String [] names) {
+             
+             for (int i = 0; i < names.length; ++i) {
+                JCheckBox temp = new JCheckBox(names[i]);
+                //i.setMnemonic(KeyEvent.VC_i);  // Set this later as it fits
+                temp.setSelected(true);
+                add(temp);
+            }
+         }
+            
+        
+    }
