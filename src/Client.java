@@ -183,7 +183,9 @@ public class Client {
     public String receiveMessage() {
         String message = "";
         try {
+            System.out.println("Waiting for incoming message.");
             message = input.readLine();
+            System.out.println("Received message: " + message);
         } catch (IOException e) {
             System.err.println("Could not get message from Server/other "
                 + "Client.");
