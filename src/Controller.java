@@ -59,7 +59,7 @@ public class Controller implements ActionListener {
         this.gui = gui;
         client.sendName();
         System.out.println("Client connected to server.");
-        
+        addListeners();
         // Creates a thread that listens to messages from the Server.
         new Thread(new ClientListener(client)).start();
         
@@ -76,7 +76,7 @@ public class Controller implements ActionListener {
     /**************************************************************************
      * Adds this controller class as the buttonListener for the GUI buttons.
      *************************************************************************/
-    private void addListener() {
+    private void addListeners() {
         send = gui.getSendButton();
         send.addActionListener(this);
     }
