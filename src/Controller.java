@@ -14,6 +14,9 @@ public class Controller implements ActionListener {
     /** The ClientGUI which this controller controls. */
     private ClientGUI gui;
     
+    /** Send button from GIU. */
+    private JButton send; 
+    
     /**************************************************************************
      * Helper class that listens to incoming messages to a Cleint within its 
      * own thread.
@@ -74,22 +77,23 @@ public class Controller implements ActionListener {
      * Adds this controller class as the buttonListener for the GUI buttons.
      *************************************************************************/
     private void addListener() {
-        gui.getSendButton().addActionListener(this);
+        send = gui.getSendButton();
+        send.addActionListener(this);
     }
     
     /**************************************************************************
      * Sends message from Client to all other Clients.
      *************************************************************************/
     private void sendMessage() {
-        String message = gui.getClientText().getText();
-        gui.getClientText().setText("");
+        String message = gui.getClientText();
+        gui.clearInput();
         client.sendMessage(message);
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        if ((JButton)e.getSource() == gui.getSendButton()) {
+        if ((JButton)e.getSource() == send) {
             sendMessage();
         }
         

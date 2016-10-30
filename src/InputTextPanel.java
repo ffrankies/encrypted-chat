@@ -33,8 +33,13 @@
         }
         
         /** Allows access to text field. */
-        public JTextField getClientText() {
-            return this.clientText;
+        public String getClientText() {
+            return this.clientText.getText();
+        }
+        
+        /** Clears text area. */
+        public void clearText() {
+            this.clientText.setText("");
         }
         
     }

@@ -16,7 +16,8 @@
         }
         
         /****************************************************************
-         * Instatiating the butttons based on the names passed by the GUI
+         * Instatiating the butttons based on the names passed by the GUI.
+         * @param names the names of the other clients 
          ****************************************************************/
          public void updatePanel(String [] names) {
              

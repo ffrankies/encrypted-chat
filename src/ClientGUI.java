@@ -14,13 +14,15 @@ public class ClientGUI extends JFrame {
      * - A submit button
      * 
      */
-     
     
-    /** Panel for other client's message */
+    /** Panel for other client's message. */
     private IncomingMessagePanel incoming;
     
-    /** Panel for entering local client's message */
+    /** Panel for entering local client's message. */
     private InputTextPanel input;
+    
+    /** Panel for the admin commands. */
+    private Administration admin;
      
     public ClientGUI(String name) {
         
@@ -30,6 +32,8 @@ public class ClientGUI extends JFrame {
         
         input = new InputTextPanel();
         
+        admin = new Administration();
+        
         setTitle("Encrypted Chat - " + name);
         
         setSize(500, 500);
@@ -38,6 +42,7 @@ public class ClientGUI extends JFrame {
         
         add(incoming, BorderLayout.CENTER);
         add(input, BorderLayout.SOUTH);
+        add(admin, BorderLayout.EAST);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
@@ -49,8 +54,13 @@ public class ClientGUI extends JFrame {
     }
     
     /** Allows access to text field. */
-    public JTextField getClientText() {
+    public String getClientText() {
         return this.input.getClientText();
+    }
+    
+    /** Clears input text. */
+    public void clearInput() {
+        input.clearText();
     }
     // public static void main(String [] args) {
         
