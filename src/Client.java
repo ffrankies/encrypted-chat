@@ -63,10 +63,10 @@ public class Client {
      */
      
     /** The send code - sends a message to some or all clients. */
-    private static final String SEND = "@send";
+    private static final String SEND = "@send ";
     
     /** The kick code - kicks a specified client off the chat. */
-    private static final String KICK = "@kick";
+    private static final String KICK = "@kick ";
     
     /** Reads data from the server. */
     private  BufferedReader input;

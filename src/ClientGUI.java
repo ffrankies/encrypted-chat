@@ -13,19 +13,27 @@ public class ClientGUI extends JFrame {
      * 
      */
      
-    /*****************************************************
-     * The JTextArea to display the other client's message.
-     ******************************************************/
-    private JTextArea otherClientMessage; 
+    
+    /** Panel for other client's message */
+    private IncomingMessagePanel incoming;
+    
+    /** Panel for entering local client's message */
+    private InputTextPanel input;
+    
+    /** Frame to display everything */
+    private JFrame clientFrame;
     
     
-    JTextField clientText;
      
     public ClientGUI() {
         
         super();
         
+        incoming = new IncomingMessagePanel();
         
+        input = new InputTextPanel();
+        
+        clientFrame = new JFrame("Encrypted Chat");
         
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
