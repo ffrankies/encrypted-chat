@@ -37,7 +37,7 @@ public class Main {
         
         Client clientModel = new Client(clientName, serverIP);
         
-        ClientGUI clientView = new ClientGUI();
+        ClientGUI clientView = new ClientGUI(clientName);
         
         ActionListener clientController = new Controller(
             clientModel, clientView);

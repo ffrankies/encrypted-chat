@@ -27,6 +27,16 @@
             setVisible(true);
         }
         
+        /** Allows access to send button. */
+        public JButton getSendButton() {
+            return this.send;
+        }
+        
+        /** Allows access to text field. */
+        public JTextField getClientText() {
+            return this.clientText;
+        }
+        
     }
     
     

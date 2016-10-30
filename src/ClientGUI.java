@@ -22,7 +22,7 @@ public class ClientGUI extends JFrame {
     /** Panel for entering local client's message */
     private InputTextPanel input;
      
-    public ClientGUI() {
+    public ClientGUI(String name) {
         
         super();
         
@@ -30,7 +30,7 @@ public class ClientGUI extends JFrame {
         
         input = new InputTextPanel();
         
-        setTitle("Encrypted Chat");
+        setTitle("Encrypted Chat - " + name);
         
         setSize(500, 500);
         
@@ -43,6 +43,15 @@ public class ClientGUI extends JFrame {
         
     }
     
+    /** Allows access to send button. */
+    public JButton getSendButton() {
+        return this.input.getSendButton();
+    }
+    
+    /** Allows access to text field. */
+    public JTextField getClientText() {
+        return this.input.getClientText();
+    }
     // public static void main(String [] args) {
         
     //     System.out.println("This is the Client's GUI.");

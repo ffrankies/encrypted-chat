@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import javax.swing.JButton;
+
 public class Controller implements ActionListener {
     
     /** The Client which this controller controls. */
@@ -58,20 +60,38 @@ public class Controller implements ActionListener {
         // Creates a thread that listens to messages from the Server.
         new Thread(new ClientListener(client)).start();
         
-        while (true) {
-            System.out.println("Enter a message: ");
-            BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-            String message = "";
-            try {message = in.readLine();} catch (Exception e) {System.exit(1);}
-            client.sendMessage(message);
-        }
+        // while (true) {
+        //     System.out.println("Enter a message: ");
+        //     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+        //     String message = "";
+        //     try {message = in.readLine();} catch (Exception e) {System.exit(1);}
+        //     client.sendMessage(message);
+        // }
         
+    }
+    
+    /**************************************************************************
+     * Adds this controller class as the buttonListener for the GUI buttons.
+     *************************************************************************/
+    private void addListener() {
+        gui.getSendButton().addActionListener(this);
+    }
+    
+    /**************************************************************************
+     * Sends message from Client to all other Clients.
+     *************************************************************************/
+    private void sendMessage() {
+        String message = gui.getClientText().getText();
+        gui.getClientText().setText("");
+        client.sendMessage(message);
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        // To-Do
+        if ((JButton)e.getSource() == gui.getSendButton()) {
+            sendMessage();
+        }
         
     }
     
