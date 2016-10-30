@@ -214,6 +214,7 @@ public class Server {
                         clientSockets.elements(); s.hasMoreElements(); ) {
                         DataOutputStream thisSocket = s.nextElement();
                         if (!output.equals(thisSocket)) {
+                            System.out.println("Sending message.");
                             try {
                                 thisSocket.writeBytes(message + "\n");
                             } catch (IOException e) {
