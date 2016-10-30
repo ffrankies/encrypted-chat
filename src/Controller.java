@@ -93,7 +93,9 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        System.out.println("A button has been pressed.");
+        if ((JButton) e.getSource() == send) {
+            sendMessage();
+        }
         
     }
     
