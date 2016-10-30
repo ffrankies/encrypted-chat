@@ -20,9 +20,6 @@ public class ClientGUI extends JFrame {
     /** Panel for entering local client's message */
     private InputTextPanel input;
     
-    /** Frame to display everything */
-    private JFrame clientFrame;
-    
     
      
     public ClientGUI() {
@@ -33,10 +30,12 @@ public class ClientGUI extends JFrame {
         
         input = new InputTextPanel();
         
-        clientFrame = new JFrame("Encrypted Chat");
+        setTitle("Encrypted Chat");
         
-        clientFrame.add(incoming);
-        clientFrame.add(input);
+        setSize(500, 500);
+        
+        add(incoming);
+        add(input);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
