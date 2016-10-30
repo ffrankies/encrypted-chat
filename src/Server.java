@@ -63,8 +63,8 @@ public class Server {
      * A map using client names as keys and client sockets as values.
      * Contains all the currently connected clients.
      */
-    private static ConcurrentHashMap<String,Socket> clientSockets = 
-        new ConcurrentHashMap<String,Socket>();
+    private static ConcurrentHashMap<String,DataOutputStream> clientSockets = 
+        new ConcurrentHashMap<String,DataOutputStream>();
         
     /**
      * A map using client names as keys and threads as values.
@@ -173,6 +173,16 @@ public class Server {
                 System.exit(1);
             }
             
+            DataOutputStream output = null;
+            try {
+                output = new DataOutputStream(clientSocket.getOutputStream());
+            } catch (IOException e) {
+                System.err.println("Couldn't create output strea for client "
+                    + "socket.");
+                e.printStackTrace();
+                System.exit(1);
+            }
+            
             String clientName = "";
             try {
                 clientName = input.readLine();
@@ -186,7 +196,7 @@ public class Server {
                 + "server.");
             
             clientThreads.put(clientName, thread);
-            clientSockets.put(clientName, clientSocket);
+            clientSockets.put(clientName, output);
             
             while (true) {
                 String message = "";
@@ -200,21 +210,12 @@ public class Server {
                 System.out.println(message);
                 String command = message.substring(0, message.indexOf(" "));
                 if (command.equals("@send")) {
-                    for (Enumeration<Socket> s = clientSockets.elements(); 
-                         s.hasMoreElements(); ) {
-                        Socket thisSocket = s.nextElement();
-                        if (!clientSocket.equals(thisSocket)) {
-                            DataOutputStream output = null;
+                    for (Enumeration<DataOutputStream> s = 
+                        clientSockets.elements(); s.hasMoreElements(); ) {
+                        DataOutputStream thisSocket = s.nextElement();
+                        if (!output.equals(thisSocket)) {
                             try {
-                                output = new DataOutputStream(
-                                    thisSocket.getOutputStream());
-                            } catch (IOException e) {
-                                System.err.println("Could not create data "
-                                    + "output stream to Client.");
-                                e.printStackTrace();
-                            }
-                            try {
-                                output.writeBytes(message + "\n");
+                                thisSocket.writeBytes(message + "\n");
                             } catch (IOException e) {
                                 System.err.println("Could not send data to "
                                     + "client.");

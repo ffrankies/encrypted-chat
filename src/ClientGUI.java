@@ -35,6 +35,8 @@ public class ClientGUI extends JFrame {
         
         clientFrame = new JFrame("Encrypted Chat");
         
+        clientFrame.add(incoming);
+        clientFrame.add(input);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
