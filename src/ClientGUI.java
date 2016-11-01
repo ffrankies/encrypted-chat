@@ -64,6 +64,20 @@ public class ClientGUI extends JFrame {
     public void clearInput() {
         input.clearText();
     }
+    
+    /**************************************************************************
+     * Adds a Label containing sent text to the IncomingMessagePanel 
+     * @param text is the text to be displayed
+     * @param self is true when the message was sent by this client, false 
+     * when coming from another client.
+     *************************************************************************/
+    public void addLabel(String text, boolean self) {
+        if (self) {
+            incoming.addLabel(text, SwingConstants.RIGHT);
+        } else {
+            incoming.addLabel(text, SwingConstants.LEFT);
+        }
+    }
     // public static void main(String [] args) {
         
     //     System.out.println("This is the Client's GUI.");

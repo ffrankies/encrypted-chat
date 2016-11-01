@@ -26,7 +26,7 @@
              for (int i = 0; i < names.length; ++i) {
                 JCheckBox temp = new JCheckBox(names[i]);
                 //i.setMnemonic(KeyEvent.VC_i);  // Set this later as it fits
-                temp.setSelected(true);
+                temp.setSelected(false);
                 add(temp);
             }
          }

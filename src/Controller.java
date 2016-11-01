@@ -41,7 +41,7 @@ public class Controller implements ActionListener {
         public void run() {
             while (true) {
                 String message = client.receiveMessage();
-                System.out.println(message);
+                gui.addLabel(message, false);
             }
             
         }
@@ -87,6 +87,7 @@ public class Controller implements ActionListener {
     private void sendMessage() {
         String message = gui.getClientText();
         gui.clearInput();
+        gui.addLabel(message, true);
         client.sendMessage(message);
     }
     
