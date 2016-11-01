@@ -6,7 +6,7 @@ import javax.swing.ScrollPaneConstants;
 
 import java.awt.Color;
 import java.awt.Dimension;
-
+import java.awt.BorderLayout;
 
 public class IncomingMessagePanel extends JPanel {
     
@@ -29,13 +29,15 @@ public class IncomingMessagePanel extends JPanel {
         
         myScrollPane.setBackground(Color.WHITE);
         
+        setLayout(new BorderLayout());
+        
         myScrollPane.setVerticalScrollBarPolicy(
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         
-        add(myScrollPane);
+        add(myScrollPane, BorderLayout.CENTER);
         
-        setPreferredSize(new Dimension(400, 400));
-        setPreferredSize(new Dimension(400, 400));
+        // setPreferredSize(new Dimension(400, 400));
+        // setPreferredSize(new Dimension(400, 400));
         
         setVisible(true);
         
