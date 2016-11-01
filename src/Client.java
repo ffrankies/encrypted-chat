@@ -194,7 +194,7 @@ public class Client {
                 + "Client.");
             e.printStackTrace();
         }
-        String code = message.substring(0, message.indexOf(" ") + 1);
+        String code = message.substring(0, message.indexOf(" "));
         if (code.equals(CLIENTLIST)) {
             processClientList(message.substring(message.indexOf(" ") + 1));
             return "";
