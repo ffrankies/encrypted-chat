@@ -3,6 +3,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JLabel;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.BoxLayout;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,6 +35,8 @@ public class IncomingMessagePanel extends JPanel {
         myScrollPane.setVerticalScrollBarPolicy(
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         
+        setLayout(new BoxLayout(myTextArea, BoxLayout.Y_AXIS));
+        
         add(myScrollPane, BorderLayout.CENTER);
         
         // setPreferredSize(new Dimension(400, 400));
@@ -47,6 +50,10 @@ public class IncomingMessagePanel extends JPanel {
         JLabel label = new JLabel(text, align);
         label.setSize(myTextArea.getWidth(), label.getHeight());
         myTextArea.add(label);
+        myTextArea.revalidate();
+        myTextArea.repaint();
+        revalidate();
+        repaint();
     }
     
 }
