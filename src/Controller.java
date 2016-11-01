@@ -18,7 +18,7 @@ public class Controller implements ActionListener {
     private JButton send; 
     
     /**************************************************************************
-     * Helper class that listens to incoming messages to a Cleint within its 
+     * Helper class that listens to incoming messages to a Client within its 
      * own thread.
      *************************************************************************/
     private class ClientListener implements Runnable {

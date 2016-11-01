@@ -33,7 +33,7 @@ public class IncomingMessagePanel extends JPanel {
         setLayout(new BorderLayout());
         
         myScrollPane.setVerticalScrollBarPolicy(
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         
         myTextArea.setLayout(new BoxLayout(myTextArea, BoxLayout.Y_AXIS));
         
@@ -48,8 +48,8 @@ public class IncomingMessagePanel extends JPanel {
     
     public void addLabel(String text, int align) {
         JLabel label = new JLabel(text, align);
-        label.setSize(myTextArea.getWidth(), label.getHeight());
         myTextArea.add(label);
+        label.setSize(myTextArea.getWidth(), label.getHeight());
         myTextArea.revalidate();
         myTextArea.repaint();
         revalidate();
