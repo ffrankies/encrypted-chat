@@ -35,7 +35,7 @@ public class IncomingMessagePanel extends JPanel {
         myScrollPane.setVerticalScrollBarPolicy(
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         
-        setLayout(new BoxLayout(myTextArea, BoxLayout.Y_AXIS));
+        myTextArea.setLayout(new BoxLayout(myTextArea, BoxLayout.Y_AXIS));
         
         add(myScrollPane, BorderLayout.CENTER);
         

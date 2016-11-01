@@ -8,9 +8,6 @@
         /** Scroll pane for having too many clients for the display. */
         JScrollPane scroll; 
         
-        // /** Array to be used for the name of clients sent by the server. */
-        // String [] clientNames;
-        
         public ClientListGUI(){
             
             scroll = new JScrollPane();
