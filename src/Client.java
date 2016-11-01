@@ -47,7 +47,7 @@ public class Client {
     private static final int port = 48700;
     
     /** The names of all the other connected Clients. */
-    private ArrayList<String> otherClients;
+    private ArrayList<String> otherClients = new ArrayList<String>();
     
     /* 
      * A list of codes to be inserted in front of the message, so the Server
