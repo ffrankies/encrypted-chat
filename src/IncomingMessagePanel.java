@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import javax.swing.ScrollPaneConstants;
 
 import java.awt.Color;
+import java.awt.Dimension;
 
 
 public class IncomingMessagePanel extends JPanel {
@@ -33,12 +34,15 @@ public class IncomingMessagePanel extends JPanel {
         
         add(myScrollPane);
         
+        setPreferredSize(new Dimension(400, 400));
+        setPreferredSize(new Dimension(400, 400));
+        
         setVisible(true);
         
     }
     
     public void addLabel(String text, int align) {
-        JLabel label = new JLabel("text", align);
+        JLabel label = new JLabel(text, align);
         label.setSize(myTextArea.getWidth(), label.getHeight());
         myTextArea.add(label);
     }
