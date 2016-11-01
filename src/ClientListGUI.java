@@ -1,6 +1,10 @@
     import javax.swing.JPanel;
     import javax.swing.JScrollPane;
     import javax.swing.JCheckBox;
+    import javax.swing.ScrollPaneConstants;
+    
+    import java.awt.BorderLayout;
+    import java.awt.Color;
     
     public class ClientListGUI extends JPanel {
         
@@ -11,6 +15,13 @@
         public ClientListGUI(){
             
             scroll = new JScrollPane();
+            
+            scroll.setBackground(Color.WHITE);
+        
+            setLayout(new BorderLayout());
+        
+            scroll.setVerticalScrollBarPolicy(
+            ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
             
         }
         

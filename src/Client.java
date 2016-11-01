@@ -68,6 +68,9 @@ public class Client {
     /** The kick code - kicks a specified client off the chat. */
     private static final String KICK = "@kick ";
     
+    /** The client list code - sends list of clients to all clients. */
+    private static final String CLIENTLIST = "@clientlist";
+    
     /** Reads data from the server. */
     private  BufferedReader input;
     
@@ -191,7 +194,24 @@ public class Client {
                 + "Client.");
             e.printStackTrace();
         }
-        return message;
+        String code = message.substring(0, message.indexOf(" ") + 1);
+        if (code.equals(CLIENTLIST)) {
+            processClientList(message.substring(message.indexOf(" ") + 1));
+            return "";
+        }
+        return message.substring(message.indexOf(" ") + 1);
+    }
+    
+    /**************************************************************************
+     * Processes a message containing list of clients
+     *************************************************************************/
+    private void processClientList(String message) {
+        String[] clients = message.split(",");
+        for (int i = 0; i < clients.length - 1; ++i) {
+            if (!otherClients.contains(clients[i]) && !clients[i].equals(name)) {
+                otherClients.add(clients[i]);
+            }
+        }
     }
     
     // public static void main(String[] args) {

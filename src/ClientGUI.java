@@ -78,10 +78,5 @@ public class ClientGUI extends JFrame {
             incoming.addLabel(text, SwingConstants.LEFT);
         }
     }
-    // public static void main(String [] args) {
-        
-    //     System.out.println("This is the Client's GUI.");
-        
-    // }
     
 }

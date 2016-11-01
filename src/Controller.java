@@ -41,7 +41,11 @@ public class Controller implements ActionListener {
         public void run() {
             while (true) {
                 String message = client.receiveMessage();
-                gui.addLabel(message, false);
+                if (message.equals("")) {
+                    
+                } else {
+                    gui.addLabel(message, false);
+                }
             }
             
         }
