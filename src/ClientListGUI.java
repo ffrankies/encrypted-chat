@@ -56,6 +56,9 @@
                 clients[i] = temp;
             }
             
+            scroll.revalidate();
+            scroll.repaint();
+            
             revalidate();
             repaint();
             

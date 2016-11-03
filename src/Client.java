@@ -223,10 +223,5 @@ public class Client {
     public List<String> getOtherClients() {
         return this.otherClients;
     }
-    // public static void main(String[] args) {
-        
-    //     System.out.println("This is the client.");
-        
-    // }
     
 }

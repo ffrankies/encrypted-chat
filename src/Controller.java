@@ -124,13 +124,13 @@ public class Controller implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         
         // Sends message if user clicks on send
-        if ((JButton) e.getSource() == send) {
+        if (e.getSource() instanceof JButton && e.getSource() == send) {
             sendMessage();
         }
         
         // Toggles checkbox if user clicks on it
         for (JCheckBox box: checkboxes) {
-            if ((JCheckBox) e.getSource() == box) {
+            if (e.getSource() instanceof JCheckBox && e.getSource() == box) {
                 if (box.isSelected()) {
                     box.setSelected(false);
                 } else {
