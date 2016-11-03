@@ -1,4 +1,9 @@
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.JCheckBox;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+
+import java.util.List;
 
 import java.awt.BorderLayout;
 
@@ -24,6 +29,9 @@ public class ClientGUI extends JFrame {
     /** Panel for the admin commands. */
     private Administration admin;
     
+    /** Panel for the client list. */
+    private ClientListGUI clientList;
+    
     //JButton send = new JButton("Send");
      
     public ClientGUI(String name) {
@@ -36,6 +44,8 @@ public class ClientGUI extends JFrame {
         
         admin = new Administration();
         
+        clientList = new ClientListGUI();
+        
         setTitle("Encrypted Chat - " + name);
         
         setSize(500, 500);
@@ -45,6 +55,8 @@ public class ClientGUI extends JFrame {
         add(incoming, BorderLayout.CENTER);
         add(input, BorderLayout.SOUTH);
         add(admin, BorderLayout.EAST);
+        add(clientList, BorderLayout.WEST);
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setVisible(true);
         
@@ -79,4 +91,13 @@ public class ClientGUI extends JFrame {
         }
     }
     
+    /**************************************************************************
+     * Updates the Client list in the clientList panel with the new list of 
+     * other Clients.
+     * @param otherClients is the new list of other connected Clients.
+     * @return a JCheckBox[] of buttons created from the list of Clients.
+     *************************************************************************/
+    public JCheckBox[] updateClients(List<String> otherClients) {
+        return clientList.updatePanel(otherClients);
+    }
 }

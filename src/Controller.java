@@ -5,7 +5,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 
+import java.util.List;
+
+/******************************************************************************
+ * The controller part of the client MVC. Listens for actions on the Client 
+ * GUI, calls Client methods, listens for messages that the Client receives,
+ * updates the GUI when needed.
+ * @author Frank Derry Wanye
+ * @author Gloire Rubambiza
+ * @since 10/02/2016
+ *****************************************************************************/
 public class Controller implements ActionListener {
     
     /** The Client which this controller controls. */
@@ -14,8 +25,11 @@ public class Controller implements ActionListener {
     /** The ClientGUI which this controller controls. */
     private ClientGUI gui;
     
-    /** Send button from GIU. */
+    /** Send button from GUI. */
     private JButton send; 
+    
+    /** The checkboxes from the clientList panel in the GUI. */
+    private JCheckBox[] checkboxes = new JCheckBox[0];
     
     /**************************************************************************
      * Helper class that listens to incoming messages to a Client within its 
@@ -42,7 +56,8 @@ public class Controller implements ActionListener {
             while (true) {
                 String message = client.receiveMessage();
                 if (message.equals("")) {
-                    
+                    checkboxes = gui.updateClients(client.getOtherClients());
+                    addClientListeners();
                 } else {
                     gui.addLabel(message, false);
                 }
@@ -63,7 +78,7 @@ public class Controller implements ActionListener {
         this.gui = gui;
         client.sendName();
         System.out.println("Client connected to server.");
-        addListeners();
+        addSendListener();
         // Creates a thread that listens to messages from the Server.
         new Thread(new ClientListener(client)).start();
         
@@ -78,9 +93,19 @@ public class Controller implements ActionListener {
     }
     
     /**************************************************************************
+     * Adds this controller class as the buttonListener for the other client
+     * checkboxes.
+     *************************************************************************/
+    private void addClientListeners() {
+        for (JCheckBox box: checkboxes) {
+            box.addActionListener(this);
+        }
+    }
+    
+    /**************************************************************************
      * Adds this controller class as the buttonListener for the GUI buttons.
      *************************************************************************/
-    private void addListeners() {
+    private void addSendListener() {
         send = gui.getSendButton();
         send.addActionListener(this);
     }
@@ -98,8 +123,20 @@ public class Controller implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         
+        // Sends message if user clicks on send
         if ((JButton) e.getSource() == send) {
             sendMessage();
+        }
+        
+        // Toggles checkbox if user clicks on it
+        for (JCheckBox box: checkboxes) {
+            if ((JCheckBox) e.getSource() == box) {
+                if (box.isSelected()) {
+                    box.setSelected(false);
+                } else {
+                    box.setSelected(true);
+                }
+            }
         }
         
     }

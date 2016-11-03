@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -47,7 +48,7 @@ public class Client {
     private static final int port = 48700;
     
     /** The names of all the other connected Clients. */
-    private ArrayList<String> otherClients = new ArrayList<String>();
+    private List<String> otherClients = new ArrayList<String>();
     
     /* 
      * A list of codes to be inserted in front of the message, so the Server
@@ -208,12 +209,20 @@ public class Client {
     private void processClientList(String message) {
         String[] clients = message.split(",");
         for (int i = 0; i < clients.length - 1; ++i) {
-            if (!otherClients.contains(clients[i]) && !clients[i].equals(name)) {
+            if (!otherClients.contains(clients[i]) 
+                && !clients[i].equals(name)) {
                 otherClients.add(clients[i]);
             }
         }
     }
     
+    /**************************************************************************
+     * Returns a List containing the names of the other connected clients.
+     * @return a List<String> where each member is another connected client.
+     *************************************************************************/
+    public List<String> getOtherClients() {
+        return this.otherClients;
+    }
     // public static void main(String[] args) {
         
     //     System.out.println("This is the client.");
