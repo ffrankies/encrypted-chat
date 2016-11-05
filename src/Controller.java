@@ -133,16 +133,16 @@ public class Controller implements ActionListener {
         }
         
         // Toggles checkbox if user clicks on it
-        for (JCheckBox box: checkboxes) {
-            if (e.getSource() instanceof JCheckBox && e.getSource() == box) {
-                System.out.println("Clicked on: " + box.getText());
-                if (box.isSelected()) {
-                    box.setSelected(false);
-                } else {
-                    box.setSelected(true);
-                }
-            }
-        }
+        // for (JCheckBox box: checkboxes) {
+        //     if (e.getSource() instanceof JCheckBox && e.getSource() == box) {
+        //         System.out.println("Clicked on: " + box.getText());
+        //         if (box.isSelected()) {
+        //             box.setSelected(false);
+        //         } else {
+        //             box.setSelected(true);
+        //         }
+        //     }
+        // }
         
     }
     
