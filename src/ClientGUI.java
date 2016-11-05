@@ -100,4 +100,16 @@ public class ClientGUI extends JFrame {
     public JCheckBox[] updateClients(List<String> otherClients) {
         return clientList.updatePanel(otherClients);
     }
+    
+    /**************************************************************************
+     * Gives access to the administrative buttons. 
+     * @return an array of buttons in this order:
+     * 0 - the exit button
+     * 1 - the kick button
+     * 2 - the help button
+     * 3 - the broadcast button
+     *************************************************************************/
+    public JButton[] getAdministrativeButtons() {
+        return admin.getButtons();
+    }
 }

@@ -1,5 +1,6 @@
     import javax.swing.JPanel;
     import javax.swing.JButton;
+    import javax.swing.BoxLayout;
     
     import java.awt.BorderLayout;
     
@@ -11,19 +12,53 @@
         /** Button for display a help string to the client. */
         private JButton help;
         
+        /** Button for broadcasting messages. */
+        private JButton broadcast;
+        
+        /** Button for exiting chat. */
+        private JButton exit;
+        
         public Administration() {
             
-            setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            
+            exit = new JButton("Exit");
             
             kick = new JButton("Kick");
             
             help = new JButton("Help");
             
-            // Add the buttons to the panel
-            add(kick, BorderLayout.NORTH );
+            broadcast = new JButton("Broadcast");
             
-            add(help, BorderLayout.SOUTH);
+            // Add the buttons to the panel
+            
+            add(exit);
+            
+            add(kick);
+            
+            add(help);
+            
+            add(broadcast);
+            
             
             setVisible(true);
         }
+        
+        /**********************************************************************
+         * Provides access to all administrative buttons.
+         * @return an array of buttons in this order:
+         * 0 - the exit button
+         * 1 - the kick button
+         * 2 - the help button
+         * 3 - the broadcast button
+         *********************************************************************/
+        public JButton[] getButtons() {
+            JButton[] buttons = new JButton[4];
+            buttons[0] = exit;
+            buttons[1] = kick;
+            buttons[2] = help;
+            buttons[3] = broadcast;
+            return buttons;
+        }
+        
     }

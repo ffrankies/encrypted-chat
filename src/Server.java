@@ -52,6 +52,9 @@ public class Server {
      * @param is usually the ID/name of other client
      * @message is not used in all codes
      */
+         
+    /** The broadcast code - sends a message to all clients. */
+    private static final String BROADCAST = "@broadcast";
      
     /** The send code - sends a message to some or all clients. */
     private static final String SEND = "@send";
@@ -61,6 +64,9 @@ public class Server {
     
     /** The client list code - sends list of clients to all clients. */
     private static final String CLIENTLIST = "@clientlist";
+    
+    /** The exit code - tells the server that a client is disconnecting. */
+    private static final String EXIT = "@exit";
     
     /** 
      * A map using client names as keys and client sockets as values.
@@ -235,7 +241,7 @@ public class Server {
                 }
                 System.out.println(message);
                 String command = message.substring(0, message.indexOf(" "));
-                if (command.equals("@send")) {
+                if (command.equals(BROADCAST)) {
                     for (Enumeration<DataOutputStream> outputs = 
                         clientSockets.elements(); outputs.hasMoreElements(); ) {
                         DataOutputStream thisOutput = outputs.nextElement();
@@ -251,6 +257,28 @@ public class Server {
                         }
                     }
                     System.out.println("Done looping through enumeration.");
+                } else if (command.equals(SEND)) {
+                    // Cut out SEND code
+                    message = message.substring(message.indexOf(" ") + 1);
+                    String destination = message.substring(
+                        0, message.indexOf(" "));
+                    // Cut out DESTINATION name
+                    message = message.substring(message.indexOf(" ") + 1);
+                    // Reinsert SEND code
+                    message = SEND + " " + message + "\n";
+                    DataOutputStream thisOutput = 
+                        clientSockets.get(destination);
+                    try {
+                        thisOutput.writeBytes(message);
+                    } catch (IOException e) {
+                        System.err.println("Could not send data to " + 
+                            destination);
+                        e.printStackTrace();
+                    }
+                } else if (command.equals(KICK)) {
+                    
+                } else if (command.equals(EXIT)) {
+                    
                 }
             }
             

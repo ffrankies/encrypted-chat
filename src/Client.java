@@ -63,7 +63,10 @@ public class Client {
      * @message is not used in all codes
      */
      
-    /** The send code - sends a message to some or all clients. */
+    /** The broadcast code - sends a message to all clients. */
+    private static final String BROADCAST = "@broadcast ";
+    
+    /** The send code - sends a message to some or one client(s). */
     private static final String SEND = "@send ";
     
     /** The kick code - kicks a specified client off the chat. */
@@ -71,6 +74,9 @@ public class Client {
     
     /** The client list code - sends list of clients to all clients. */
     private static final String CLIENTLIST = "@clientlist";
+        
+    /** The exit code - tells the server that a client is disconnecting. */
+    private static final String EXIT = "@exit";
     
     /** Reads data from the server. */
     private  BufferedReader input;
@@ -132,8 +138,18 @@ public class Client {
      *************************************************************************/
     public void sendMessage(String message, String otherClient) {
         
-        // To-Do
-        
+        /*
+         * Message format:
+         * @send @DestionationName/ID @SenderName/ID message \n
+         */
+        try {
+            output.writeBytes(SEND + "@" + otherClient + " @" + name + " " + 
+                message + "\n");
+        } catch (IOException e) {
+            System.err.println("Could not send message to server.");
+            e.printStackTrace();
+            return;
+        }
         
     }
     
@@ -145,10 +161,10 @@ public class Client {
         
         /*
          * Message format:
-         * @SEND @SenderName/ID message \n
+         * @broadcast @SenderName/ID message \n
          */
         try {
-            output.writeBytes(SEND + "@" + name + " " + message + "\n");
+            output.writeBytes(BROADCAST + "@" + name + " " + message + "\n");
         } catch (IOException e) {
             System.err.println("Could not send message to server.");
             e.printStackTrace();
@@ -161,9 +177,16 @@ public class Client {
      * Sends a command to the Server.
      * @param command is the name of the command to be sent to the server
      *************************************************************************/
-    public void sendCommand(String command) {
+    public void sendKick( String users) {
         
-        // To-Do
+        try{
+            output.writeBytes(KICK + users + "\n");
+            
+        } catch (IOException e){
+            System.err.println("Could not send kick message to server.");
+            e.printStackTrace();
+            return;
+        }
         
     }
     
@@ -208,13 +231,9 @@ public class Client {
      *************************************************************************/
     private void processClientList(String message) {
         String[] clients = message.split(",");
-        for (String cname: clients) {
-            System.out.println("Found client: " + cname);
-        }
         for (int i = 0; i < clients.length; ++i) {
             if (!otherClients.contains(clients[i]) 
                 && !clients[i].equals(name)) {
-                System.out.println("Adding client: " + clients[i]);
                 otherClients.add(clients[i]);
             }
         }

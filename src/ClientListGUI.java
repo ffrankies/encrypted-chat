@@ -52,6 +52,7 @@
                 JCheckBox temp = new JCheckBox(names.get(i));
                 //i.setMnemonic(KeyEvent.VC_i);  // Set this later as it fits
                 temp.setSelected(false);
+                //temp.doClick();
                 add(temp);
                 clients[i] = temp;
             }
@@ -61,8 +62,6 @@
             
             revalidate();
             repaint();
-            
-            System.out.println("Num checkboxes: " + clients.length);
             
             return clients;
             

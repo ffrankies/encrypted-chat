@@ -28,6 +28,9 @@ public class Controller implements ActionListener {
     /** Send button from GUI. */
     private JButton send; 
     
+    /** The administrative buttons from the GUI. */
+    private JButton exit, kick, help, broadcast;
+    
     /** The checkboxes from the clientList panel in the GUI. */
     private JCheckBox[] checkboxes = new JCheckBox[0];
     
@@ -56,8 +59,6 @@ public class Controller implements ActionListener {
             while (true) {
                 String message = client.receiveMessage();
                 if (message.equals("")) {
-                    for (String name: client.getOtherClients())
-                        System.out.println(name);
                     checkboxes = gui.updateClients(client.getOtherClients());
                     addClientListeners();
                 } else {
@@ -80,7 +81,7 @@ public class Controller implements ActionListener {
         this.gui = gui;
         client.sendName();
         System.out.println("Client connected to server.");
-        addSendListener();
+        addButtonListeners();
         // Creates a thread that listens to messages from the Server.
         new Thread(new ClientListener(client)).start();
         
@@ -109,9 +110,18 @@ public class Controller implements ActionListener {
     /**************************************************************************
      * Adds this controller class as the buttonListener for the GUI buttons.
      *************************************************************************/
-    private void addSendListener() {
+    private void addButtonListeners() {
         send = gui.getSendButton();
         send.addActionListener(this);
+        JButton[] admin = gui.getAdministrativeButtons();
+        exit = admin[0];
+        exit.addActionListener(this);
+        kick = admin[1];
+        kick.addActionListener(this);
+        help = admin[2];
+        help.addActionListener(this);
+        broadcast = admin[3];
+        broadcast.addActionListener(this);
     }
     
     /**************************************************************************
@@ -124,26 +134,46 @@ public class Controller implements ActionListener {
         client.sendMessage(message);
     }
     
+    /**************************************************************************
+     * Sends message from Client to a specific Client.
+     * @param destination is the name of the Client to which this message is 
+     * to be sent.
+     *************************************************************************/
+    private void sendMessage(String destination) {
+        String message = gui.getClientText();
+        gui.clearInput();
+        gui.addLabel(message, true);
+        client.sendMessage(message, destination);
+    }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         
-        // Sends message if user clicks on send
-        if (e.getSource() instanceof JButton && e.getSource() == send) {
+        // Broacasts the message on the network
+        if (e.getSource() instanceof JButton && e.getSource() == broadcast) {
             sendMessage();
+        } else if (e.getSource() instanceof JButton && e.getSource() == send) {
+            for (JCheckBox box: checkboxes) {
+                if (box.isSelected()) {
+                    sendMessage(box.getText());
+                }
+            }
+        } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
+            // code for exiting out of program
+        } else if (e.getSource() instanceof JButton && e.getSource() == kick) {
+            String namesToKick = "";
+            for (int i = 0; i < checkboxes.length; ++i){
+                if(checkboxes[i].isSelected()){
+                    namesToKick += checkboxes[i].getText()+",";
+                }
+            }
+            String namesToKickCopy = namesToKick.substring(0,
+                                        namesToKick.length());
+            
+            
+        } else if (e.getSource() instanceof JButton && e.getSource() == help) {
+            
         }
-        
-        // Toggles checkbox if user clicks on it
-        // for (JCheckBox box: checkboxes) {
-        //     if (e.getSource() instanceof JCheckBox && e.getSource() == box) {
-        //         System.out.println("Clicked on: " + box.getText());
-        //         if (box.isSelected()) {
-        //             box.setSelected(false);
-        //         } else {
-        //             box.setSelected(true);
-        //         }
-        //     }
-        // }
-        
     }
     
 }
