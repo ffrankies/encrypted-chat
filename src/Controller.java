@@ -141,7 +141,6 @@ public class Controller implements ActionListener {
      *************************************************************************/
     private void sendMessage(String destination) {
         String message = gui.getClientText();
-        gui.clearInput();
         gui.addLabel(message, true);
         client.sendMessage(message, destination);
     }
@@ -151,15 +150,30 @@ public class Controller implements ActionListener {
         
         // Broacasts the message on the network
         if (e.getSource() instanceof JButton && e.getSource() == broadcast) {
+            
             sendMessage();
+            
         } else if (e.getSource() instanceof JButton && e.getSource() == send) {
+            
             for (JCheckBox box: checkboxes) {
                 if (box.isSelected()) {
                     sendMessage(box.getText());
                 }
+                gui.clearInput();
             }
+            
         } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
-            // code for exiting out of program
+            
+            client.alertExit();
+            // Gives server time to disconnect this client
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+            client.closeConnection();
+            System.exit(0);
+            
         } else if (e.getSource() instanceof JButton && e.getSource() == kick) {
             String namesToKick = "";
             for (int i = 0; i < checkboxes.length; ++i){

@@ -68,11 +68,18 @@ public class Server {
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
-    /** 
+    /**
      * A map using client names as keys and client sockets as values.
+     * Contains all currently connected clients.
+     */
+    private static ConcurrentHashMap<String,Socket> clientSockets = 
+        new ConcurrentHashMap<String,Socket>();
+    
+    /** 
+     * A map using client names as keys and client output streams as values.
      * Contains all the currently connected clients.
      */
-    private static ConcurrentHashMap<String,DataOutputStream> clientSockets = 
+    private static ConcurrentHashMap<String,DataOutputStream> clientOutputs = 
         new ConcurrentHashMap<String,DataOutputStream>();
         
     /**
@@ -168,14 +175,14 @@ public class Server {
             
             // Get all currently connected client names
             String clientList = "";
-            for (Enumeration<String> clients = clientSockets.keys(); 
+            for (Enumeration<String> clients = clientOutputs.keys(); 
                  clients.hasMoreElements(); ) {
                 clientList += clients.nextElement() + ",";         
             }
             clientList = CLIENTLIST + " " + clientList;
             
             for (Enumeration<DataOutputStream> outputs = 
-                 clientSockets.elements(); outputs.hasMoreElements(); ) {
+                 clientOutputs.elements(); outputs.hasMoreElements(); ) {
                 DataOutputStream thisOutput = outputs.nextElement();
                 try {
                     thisOutput.writeBytes(clientList + "\n");
@@ -226,7 +233,8 @@ public class Server {
                 + "server.");
             
             clientThreads.put(clientName, thread);
-            clientSockets.put(clientName, output);
+            clientOutputs.put(clientName, output);
+            clientSockets.put(clientName, clientSocket);
             
             sendClientList();
             
@@ -243,7 +251,7 @@ public class Server {
                 String command = message.substring(0, message.indexOf(" "));
                 if (command.equals(BROADCAST)) {
                     for (Enumeration<DataOutputStream> outputs = 
-                        clientSockets.elements(); outputs.hasMoreElements(); ) {
+                        clientOutputs.elements(); outputs.hasMoreElements(); ) {
                         DataOutputStream thisOutput = outputs.nextElement();
                         if (!output.equals(thisOutput)) {
                             System.out.println("Sending message.");
@@ -267,7 +275,7 @@ public class Server {
                     // Reinsert SEND code
                     message = SEND + " " + message + "\n";
                     DataOutputStream thisOutput = 
-                        clientSockets.get(destination.substring(1));
+                        clientOutputs.get(destination.substring(1));
                     try {
                         thisOutput.writeBytes(message);
                     } catch (IOException e) {
@@ -278,12 +286,60 @@ public class Server {
                 } else if (command.equals(KICK)) {
                     // Take kick command out of message
                     message = message.substring(message.indexOf(" ") + 1);
+                    String[] clients = message.split(",");
+                    for(int i = 0; i < clients.length; ++i){
+                        DataOutputStream thisOutput = clientOutputs.get(
+                            clients[i]);
+                        Thread thisThread = clientThreads.get(clients[i]);
+                        Socket thisSocket = clientSockets.get(clients[i]);
+                        try{
+                            thisThread.interrupt();
+                            thisSocket.close();
+                            thisOutput.close();
+                            sendClientList();
+                        }
+                        catch (SecurityException e ){
+                            System.err.println("Could not close the thread");
+                            e.printStackTrace();
+                        }
+                        catch(IOException e){
+                            System.err.println("Could not close"+ 
+                            " DataOutputStream");
+                            e.printStackTrace();
+                        }
+                    }
                     
                 } else if (command.equals(EXIT)) {
-                    
-                }
-            }
+                    message = SEND + " " + clientName + " has disconnected.\n";
+                    for (Enumeration<DataOutputStream> outputs = 
+                        clientOutputs.elements(); outputs.hasMoreElements(); ) {
+                        DataOutputStream thisOutput = outputs.nextElement();
+                        if (!output.equals(thisOutput)) {
+                            System.out.println("Sending exit notice.");
+                            try {
+                                thisOutput.writeBytes(message);
+                            } catch (IOException e) {
+                                System.err.println("Could not send exit notice"
+                                    + " to client.");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    try {
+                        clientSocket.close();
+                    } catch (IOException e) {
+                        System.err.println("Couldn't close client socket.");
+                        e.printStackTrace();
+                    }
+                    clientOutputs.remove(clientName);
+                    clientThreads.remove(clientName);
+                    // Completes while loop and ends this thread
+                    break;
+                } // if statement
+                
+            }  // while loop 
             
+            System.out.println("Client has exited gracefully: " + clientName);
         }
         
     }

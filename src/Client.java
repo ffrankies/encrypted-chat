@@ -191,6 +191,19 @@ public class Client {
     }
     
     /**************************************************************************
+     * Alerts the server that this Client is disconnecting.
+     *************************************************************************/
+    public void alertExit() {
+        try {
+            output.writeBytes(EXIT + "@" + name);
+        } catch (IOException e) {
+            System.err.println("Could not send Exit alert to the server.");
+            e.printStackTrace();
+            return;
+        }
+    }
+    
+    /**************************************************************************
      * Sends out the name of this Client.
      *************************************************************************/
     public void sendName() {
@@ -245,6 +258,19 @@ public class Client {
      *************************************************************************/
     public List<String> getOtherClients() {
         return this.otherClients;
+    }
+    
+    /**************************************************************************
+     * Closes the connection between client and server.
+     *************************************************************************/
+    public void closeConnection() {
+        try {
+            input.close();
+            output.close();
+        } catch (IOException e) {
+            System.err.println("Couldn't close input and output streams.");
+            e.printStackTrace();
+        }
     }
     
 }
