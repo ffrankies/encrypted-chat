@@ -99,7 +99,9 @@ public class Controller implements ActionListener {
      * checkboxes.
      *************************************************************************/
     private void addClientListeners() {
+        System.out.println("Num checkboxes: " + checkboxes.length);
         for (JCheckBox box: checkboxes) {
+            System.out.println("Adding listener to checkbox: " + box.getText());
             box.addActionListener(this);
         }
     }
@@ -133,6 +135,7 @@ public class Controller implements ActionListener {
         // Toggles checkbox if user clicks on it
         for (JCheckBox box: checkboxes) {
             if (e.getSource() instanceof JCheckBox && e.getSource() == box) {
+                System.out.println("Clicked on: " + box.getText());
                 if (box.isSelected()) {
                     box.setSelected(false);
                 } else {
