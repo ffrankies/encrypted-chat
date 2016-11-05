@@ -211,7 +211,7 @@ public class Client {
         for (String cname: clients) {
             System.out.println("Found client: " + cname);
         }
-        for (int i = 0; i < clients.length - 1; ++i) {
+        for (int i = 0; i < clients.length; ++i) {
             if (!otherClients.contains(clients[i]) 
                 && !clients[i].equals(name)) {
                 System.out.println("Adding client: " + clients[i]);
