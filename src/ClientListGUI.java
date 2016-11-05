@@ -2,8 +2,8 @@
     import javax.swing.JScrollPane;
     import javax.swing.JCheckBox;
     import javax.swing.ScrollPaneConstants;
+    import javax.swing.BoxLayout;
     
-    import java.awt.BorderLayout;
     import java.awt.Color;
     import java.awt.Component;
     
@@ -24,7 +24,7 @@
             
             scroll.setBackground(Color.WHITE);
         
-            setLayout(new BorderLayout());
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         
             scroll.setVerticalScrollBarPolicy(
             ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
