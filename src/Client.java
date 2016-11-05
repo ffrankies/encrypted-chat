@@ -76,7 +76,7 @@ public class Client {
     private static final String CLIENTLIST = "@clientlist";
         
     /** The exit code - tells the server that a client is disconnecting. */
-    private static final String EXIT = "@exit";
+    private static final String EXIT = "@exit ";
     
     /** Reads data from the server. */
     private  BufferedReader input;

@@ -159,18 +159,18 @@ public class Controller implements ActionListener {
                 if (box.isSelected()) {
                     sendMessage(box.getText());
                 }
-                gui.clearInput();
             }
+            gui.clearInput();
             
         } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
             
             client.alertExit();
             // Gives server time to disconnect this client
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
+            // try {
+            //     Thread.sleep(3000);
+            // } catch (InterruptedException ex) {
+            //     ex.printStackTrace();
+            // }
             client.closeConnection();
             System.exit(0);
             
