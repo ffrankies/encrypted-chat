@@ -194,6 +194,7 @@ public class Client {
      * Alerts the server that this Client is disconnecting.
      *************************************************************************/
     public void alertExit() {
+        System.out.println("Alerting server of exit");
         try {
             output.writeBytes(EXIT + "@" + name);
         } catch (IOException e) {
@@ -201,6 +202,7 @@ public class Client {
             e.printStackTrace();
             return;
         }
+        System.out.println("Done alerting server of exit");
     }
     
     /**************************************************************************
@@ -264,8 +266,10 @@ public class Client {
      * Closes the connection between client and server.
      *************************************************************************/
     public void closeConnection() {
+        System.out.println("Closing the input and output.");
         try {
             input.close();
+            output.flush();
             output.close();
         } catch (IOException e) {
             System.err.println("Couldn't close input and output streams.");

@@ -100,9 +100,7 @@ public class Controller implements ActionListener {
      * checkboxes.
      *************************************************************************/
     private void addClientListeners() {
-        System.out.println("Num checkboxes: " + checkboxes.length);
         for (JCheckBox box: checkboxes) {
-            System.out.println("Adding listener to checkbox: " + box.getText());
             box.addActionListener(this);
         }
     }
