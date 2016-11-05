@@ -165,12 +165,6 @@ public class Controller implements ActionListener {
         } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
             
             client.alertExit();
-            // Gives server time to disconnect this client
-            // try {
-            //     Thread.sleep(3000);
-            // } catch (InterruptedException ex) {
-            //     ex.printStackTrace();
-            // }
             client.closeConnection();
             System.exit(0);
             

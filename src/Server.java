@@ -287,7 +287,7 @@ public class Server {
                     // Take kick command out of message
                     message = message.substring(message.indexOf(" ") + 1);
                     String[] clients = message.split(",");
-                    for(int i = 0; i < clients.length; ++i){
+                    for(int i = 0; i < clients.length-1; ++i){
                         DataOutputStream thisOutput = clientOutputs.get(
                             clients[i]);
                         Thread thisThread = clientThreads.get(clients[i]);
