@@ -208,9 +208,13 @@ public class Client {
      *************************************************************************/
     private void processClientList(String message) {
         String[] clients = message.split(",");
+        for (String cname: clients) {
+            System.out.println("Found client: " + cname);
+        }
         for (int i = 0; i < clients.length - 1; ++i) {
             if (!otherClients.contains(clients[i]) 
                 && !clients[i].equals(name)) {
+                System.out.println("Adding client: " + clients[i]);
                 otherClients.add(clients[i]);
             }
         }
