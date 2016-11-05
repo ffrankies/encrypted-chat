@@ -267,7 +267,7 @@ public class Server {
                     // Reinsert SEND code
                     message = SEND + " " + message + "\n";
                     DataOutputStream thisOutput = 
-                        clientSockets.get(destination);
+                        clientSockets.get(destination.substring(1));
                     try {
                         thisOutput.writeBytes(message);
                     } catch (IOException e) {
@@ -276,6 +276,8 @@ public class Server {
                         e.printStackTrace();
                     }
                 } else if (command.equals(KICK)) {
+                    // Take kick command out of message
+                    message = message.substring(message.indexOf(" ") + 1);
                     
                 } else if (command.equals(EXIT)) {
                     

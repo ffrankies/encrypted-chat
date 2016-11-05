@@ -169,7 +169,7 @@ public class Controller implements ActionListener {
             }
             String namesToKickCopy = namesToKick.substring(0,
                                         namesToKick.length());
-            
+            client.sendKick(" " + namesToKickCopy);
             
         } else if (e.getSource() instanceof JButton && e.getSource() == help) {
             
