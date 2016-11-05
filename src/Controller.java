@@ -56,6 +56,8 @@ public class Controller implements ActionListener {
             while (true) {
                 String message = client.receiveMessage();
                 if (message.equals("")) {
+                    // for (String name: client.getOtherClients())
+                    //     System.out.println(name);
                     checkboxes = gui.updateClients(client.getOtherClients());
                     addClientListeners();
                 } else {

@@ -62,7 +62,10 @@
             revalidate();
             repaint();
             
+            System.out.println("Num checkboxes: " + clients.length);
+            
             return clients;
+            
         }
         
     }
