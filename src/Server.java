@@ -68,26 +68,12 @@ public class Server {
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
-    /**
-     * A map using client names as keys and client sockets as values.
-     * Contains all currently connected clients.
-     */
-    private static ConcurrentHashMap<String,Socket> clientSockets = 
-        new ConcurrentHashMap<String,Socket>();
-    
     /** 
      * A map using client names as keys and client output streams as values.
      * Contains all the currently connected clients.
      */
     private static ConcurrentHashMap<String,DataOutputStream> clientOutputs = 
         new ConcurrentHashMap<String,DataOutputStream>();
-        
-    /**
-     * A map using client names as keys and threads as values.
-     * Contains all a thread per connected client.
-     */
-    private static ConcurrentHashMap<String,Thread> clientThreads =
-        new ConcurrentHashMap<String,Thread>();
     
     /** The Server's IP address */
     //private static final String ipAddress = "127.0.0.1";
@@ -232,9 +218,7 @@ public class Server {
             System.out.println("Client " + clientName + " connected to the "
                 + "server.");
             
-            clientThreads.put(clientName, thread);
             clientOutputs.put(clientName, output);
-            clientSockets.put(clientName, clientSocket);
             
             sendClientList();
             
@@ -294,8 +278,6 @@ public class Server {
                         System.out.println("Trying to kick: " + clients[i]);
                         DataOutputStream thisOutput = clientOutputs.get(
                             clients[i]);
-                        Thread thisThread = clientThreads.get(clients[i]);
-                        Socket thisSocket = clientSockets.get(clients[i]);
                         try{
                             // Tells client it is being kicked
                             thisOutput.writeBytes("@kick \n");
@@ -341,7 +323,6 @@ public class Server {
                         e.printStackTrace();
                     }
                     clientOutputs.remove(clientName);
-                    clientThreads.remove(clientName);
                     sendClientList();
                     // Completes while loop and ends this thread
                     break;
