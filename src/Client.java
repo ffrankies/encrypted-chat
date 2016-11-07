@@ -269,12 +269,16 @@ public class Client {
         System.out.println("Closing the input and output.");
         try {
             input.close();
+            System.out.println("Input closed.");
             output.flush();
+            System.out.println("Output flushed.");
             output.close();
+            System.out.println("Output closed.");
         } catch (IOException e) {
             System.err.println("Couldn't close input and output streams.");
             e.printStackTrace();
         }
+        System.out.println("Done closing the input and output.");
     }
     
 }
