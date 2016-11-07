@@ -312,7 +312,7 @@ public class Server {
                 } else if (command.equals(EXIT)) {
                     // Confirm to Client that it can disconnect
                     try {
-                        output.writeBytes("@exit\n");
+                        output.writeBytes("@exit \n");
                     } catch (IOException e) {
                         System.err.println("Could not send exit notice back"
                             + " to client.");
