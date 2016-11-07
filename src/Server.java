@@ -289,16 +289,19 @@ public class Server {
                     String[] clients = message.split(",");
                     for (String c: clients) 
                         System.out.println(c);
-                    for(int i = 0; i < clients.length-1; ++i){
+                    for(int i = 0; i < clients.length; ++i){
                         System.out.println("Trying to kick: " + clients[i]);
                         DataOutputStream thisOutput = clientOutputs.get(
                             clients[i]);
                         Thread thisThread = clientThreads.get(clients[i]);
                         Socket thisSocket = clientSockets.get(clients[i]);
                         try{
+                            // Tells client to exit 
+                            thisOutput.writeBytes("@exit \n");
                             thisThread.interrupt();
                             thisSocket.close();
                             thisOutput.close();
+                            // Removes client from concurrent maps
                             clientOutputs.remove(clients[i]);
                             clientThreads.remove(clients[i]);
                         }
