@@ -296,7 +296,6 @@ public class Server {
                             thisThread.interrupt();
                             thisSocket.close();
                             thisOutput.close();
-                            sendClientList();
                         }
                         catch (SecurityException e ){
                             System.err.println("Could not close the thread");
@@ -308,6 +307,7 @@ public class Server {
                             e.printStackTrace();
                         }
                     }
+                    sendClientList();
                     
                 } else if (command.equals(EXIT)) {
                     // Confirm to Client that it can disconnect
@@ -343,6 +343,7 @@ public class Server {
                     }
                     clientOutputs.remove(clientName);
                     clientThreads.remove(clientName);
+                    sendClientList();
                     // Completes while loop and ends this thread
                     break;
                 } // if statement
