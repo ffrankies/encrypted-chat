@@ -184,7 +184,6 @@ public class Client {
         
         try{
             output.writeBytes(KICK + users + "\n");
-            
         } catch (IOException e){
             System.err.println("Could not send kick message to server.");
             e.printStackTrace();
@@ -238,6 +237,7 @@ public class Client {
         }
         String code = message.substring(0, message.indexOf(" "));
         if (code.equals(CLIENTLIST)) {
+            System.out.println("\"" + message + "\"");
             processClientList(message.substring(message.indexOf(" ") + 1));
             return "";
         } else if (code.equals(EXIT)) {
