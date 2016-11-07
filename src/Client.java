@@ -196,7 +196,7 @@ public class Client {
     public void alertExit() {
         System.out.println("Alerting server of exit");
         try {
-            output.writeBytes(EXIT + " @" + name);
+            output.writeBytes(EXIT + " @" + name + "\n");
         } catch (IOException e) {
             System.err.println("Could not send Exit alert to the server.");
             e.printStackTrace();
