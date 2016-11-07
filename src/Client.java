@@ -3,6 +3,7 @@ import javax.swing.JFrame;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -49,7 +50,8 @@ public class Client {
     private static final int port = 48700;
     
     /** The names of all the other connected Clients. */
-    private List<String> otherClients = new ArrayList<String>();
+    private CopyOnWriteArrayList<String> otherClients = 
+        new CopyOnWriteArrayList<String>();
     
     /* 
      * A list of codes to be inserted in front of the message, so the Server
