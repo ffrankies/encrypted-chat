@@ -287,7 +287,10 @@ public class Server {
                     // Take kick command out of message
                     message = message.substring(message.indexOf(" ") + 1);
                     String[] clients = message.split(",");
+                    for (String c: clients) 
+                        System.out.println(c);
                     for(int i = 0; i < clients.length-1; ++i){
+                        System.out.println("Trying to kick: " + clients[i]);
                         DataOutputStream thisOutput = clientOutputs.get(
                             clients[i]);
                         Thread thisThread = clientThreads.get(clients[i]);
@@ -296,6 +299,8 @@ public class Server {
                             thisThread.interrupt();
                             thisSocket.close();
                             thisOutput.close();
+                            clientOutputs.remove(clients[i]);
+                            clientThreads.remove(clients[i]);
                         }
                         catch (SecurityException e ){
                             System.err.println("Could not close the thread");
