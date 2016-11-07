@@ -2,6 +2,7 @@ import javax.swing.JFrame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import java.net.Socket;
 import java.net.InetAddress;
@@ -252,6 +253,11 @@ public class Client {
             if (!otherClients.contains(clients[i]) 
                 && !clients[i].equals(name)) {
                 otherClients.add(clients[i]);
+            }
+        }
+        for (String cname: otherClients) {
+            if (!Arrays.asList(clients).contains(cname)) {
+                otherClients.remove(cname);   
             }
         }
     }
