@@ -76,7 +76,7 @@ public class Client {
     private static final String CLIENTLIST = "@clientlist";
         
     /** The exit code - tells the server that a client is disconnecting. */
-    private static final String EXIT = "@exit ";
+    private static final String EXIT = "@exit";
     
     /** Reads data from the server. */
     private  BufferedReader input;
@@ -196,7 +196,7 @@ public class Client {
     public void alertExit() {
         System.out.println("Alerting server of exit");
         try {
-            output.writeBytes(EXIT + "@" + name);
+            output.writeBytes(EXIT + " @" + name);
         } catch (IOException e) {
             System.err.println("Could not send Exit alert to the server.");
             e.printStackTrace();
@@ -237,6 +237,8 @@ public class Client {
         if (code.equals(CLIENTLIST)) {
             processClientList(message.substring(message.indexOf(" ") + 1));
             return "";
+        } else if (code.equals(EXIT)) {
+            return EXIT;
         }
         return message.substring(message.indexOf(" ") + 1);
     }
