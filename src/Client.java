@@ -73,7 +73,7 @@ public class Client {
     private static final String SEND = "@send ";
     
     /** The kick code - kicks a specified client off the chat. */
-    private static final String KICK = "@kick ";
+    private static final String KICK = "@kick";
     
     /** The client list code - sends list of clients to all clients. */
     private static final String CLIENTLIST = "@clientlist";
@@ -183,7 +183,7 @@ public class Client {
     public void sendKick( String users) {
         
         try{
-            output.writeBytes(KICK + users + "\n");
+            output.writeBytes(KICK + " " + users + "\n");
         } catch (IOException e){
             System.err.println("Could not send kick message to server.");
             e.printStackTrace();
@@ -242,6 +242,8 @@ public class Client {
             return "";
         } else if (code.equals(EXIT)) {
             return EXIT;
+        } else if (code.equals(KICK)){
+            alertExit();
         }
         return message.substring(message.indexOf(" ") + 1);
     }

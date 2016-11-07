@@ -298,18 +298,18 @@ public class Server {
                         Socket thisSocket = clientSockets.get(clients[i]);
                         try{
                             // Tells client to exit 
-                            thisOutput.writeBytes("@exit \n");
-                            thisThread.interrupt();
-                            thisSocket.close();
-                            thisOutput.close();
-                            // Removes client from concurrent maps
-                            clientOutputs.remove(clients[i]);
-                            clientThreads.remove(clients[i]);
+                            thisOutput.writeBytes("@kick \n");
+                            // thisThread.interrupt();
+                            // thisSocket.close();
+                            // thisOutput.close();
+                            // // Removes client from concurrent maps
+                            // clientOutputs.remove(clients[i]);
+                            // clientThreads.remove(clients[i]);
                         }
-                        catch (SecurityException e ){
-                            System.err.println("Could not close the thread");
-                            e.printStackTrace();
-                        }
+                        // catch (SecurityException e ){
+                        //     System.err.println("Could not close the thread");
+                        //     e.printStackTrace();
+                        // }
                         catch(IOException e){
                             System.err.println("Could not close"+ 
                             " DataOutputStream");
