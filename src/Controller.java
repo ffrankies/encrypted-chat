@@ -61,6 +61,9 @@ public class Controller implements ActionListener {
                 if (message.equals("")) {
                     checkboxes = gui.updateClients(client.getOtherClients());
                     addClientListeners();
+                } else if (message.equals("@exit")) {
+                    client.closeConnection();
+                    System.exit(0);
                 } else {
                     gui.addLabel(message, false);
                 }
@@ -163,9 +166,9 @@ public class Controller implements ActionListener {
         } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
             
             client.alertExit();
-            client.closeConnection();
-            System.out.println("Reached the system.exit line.");
-            System.exit(0);
+            // client.closeConnection();
+            // System.out.println("Reached the system.exit line.");
+            // System.exit(0);
             
         } else if (e.getSource() instanceof JButton && e.getSource() == kick) {
             String namesToKick = "";
