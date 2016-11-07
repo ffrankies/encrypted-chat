@@ -243,7 +243,8 @@ public class Server {
                 try {
                     message = input.readLine();
                 } catch (IOException e) {
-                    System.err.println("Could not read from client socket.");
+                    System.err.println("Could not read from client socket. " 
+                        + clientName);
                     e.printStackTrace();
                     System.exit(1);
                 }
