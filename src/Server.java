@@ -297,20 +297,9 @@ public class Server {
                         Thread thisThread = clientThreads.get(clients[i]);
                         Socket thisSocket = clientSockets.get(clients[i]);
                         try{
-                            // Tells client to exit 
+                            // Tells client it is being kicked
                             thisOutput.writeBytes("@kick \n");
-                            // thisThread.interrupt();
-                            // thisSocket.close();
-                            // thisOutput.close();
-                            // // Removes client from concurrent maps
-                            // clientOutputs.remove(clients[i]);
-                            // clientThreads.remove(clients[i]);
-                        }
-                        // catch (SecurityException e ){
-                        //     System.err.println("Could not close the thread");
-                        //     e.printStackTrace();
-                        // }
-                        catch(IOException e){
+                        } catch(IOException e){
                             System.err.println("Could not close"+ 
                             " DataOutputStream");
                             e.printStackTrace();
@@ -328,7 +317,8 @@ public class Server {
                         e.printStackTrace();
                     }
                     // Alert other users that client is disconnecting 
-                    message = SEND + " " + clientName + " has disconnected.\n";
+                    message = SEND + " " + clientName + " has disconnected " 
+                        + "gracefully.\n";
                     for (Enumeration<DataOutputStream> outputs = 
                         clientOutputs.elements(); outputs.hasMoreElements(); ) {
                         DataOutputStream thisOutput = outputs.nextElement();
