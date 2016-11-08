@@ -1,0 +1,222 @@
+Waiting for a client to connect.
+Waiting for a client to connect.
+Client vw connected to the server.
+Sent clientList to all clients.
+@broadcast @vw Hello Server
+Done looping through enumeration.
+Waiting for a client to connect.
+Client v2 connected to the server.
+Sent clientList to all clients.
+@send @v2 @vw Hello v2
+@exit @vw
+Sending exit notice.
+Sent clientList to all clients.
+Client has exited gracefully: vw
+@exit @v2
+Sent clientList to all clients.
+Client has exited gracefully: v2
+Waiting for a client to connect.
+Client Frank connected to the server.
+Sent clientList to all clients.
+@broadcast @Frank Why isn't anybody here?
+Done looping through enumeration.
+@broadcast @Frank Hello??
+Done looping through enumeration.
+null
+Exception in thread "Thread-2" java.lang.NullPointerException
+	at Server$ConnectionHandler.run(Server.java:236)
+	at java.lang.Thread.run(Thread.java:745)
+Waiting for a client to connect.
+Client c2 connected to the server.
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:223)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+@kick Frank,
+Frank
+Trying to kick: Frank
+Could not close DataOutputStream
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.run(Server.java:283)
+	at java.lang.Thread.run(Thread.java:745)
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:290)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+@kick Frank,
+Frank
+Trying to kick: Frank
+Could not close DataOutputStream
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.run(Server.java:283)
+	at java.lang.Thread.run(Thread.java:745)
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:290)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+Waiting for a client to connect.
+Client c2 connected to the server.
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:223)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+@exit @c2
+Sending exit notice.
+Could not send exit notice to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.run(Server.java:310)
+	at java.lang.Thread.run(Thread.java:745)
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:326)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+Client has exited gracefully: c2
+@exit @c2
+Sending exit notice.
+Could not send exit notice to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.run(Server.java:310)
+	at java.lang.Thread.run(Thread.java:745)
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:326)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+Client has exited gracefully: c2
+Waiting for a client to connect.
+Client c3 connected to the server.
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:223)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+@exit @c3
+Sending exit notice.
+Could not send exit notice to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.run(Server.java:310)
+	at java.lang.Thread.run(Thread.java:745)
+Could not send client list to client.
+java.net.SocketException: Broken pipe
+	at java.net.SocketOutputStream.socketWrite0(Native Method)
+	at java.net.SocketOutputStream.socketWrite(SocketOutputStream.java:109)
+	at java.net.SocketOutputStream.write(SocketOutputStream.java:132)
+	at java.io.DataOutputStream.writeBytes(DataOutputStream.java:276)
+	at Server$ConnectionHandler.sendClientList(Server.java:174)
+	at Server$ConnectionHandler.run(Server.java:326)
+	at java.lang.Thread.run(Thread.java:745)
+Sent clientList to all clients.
+Client has exited gracefully: c3
+Waiting for a client to connect.
+Client Frank connected to the server.
+Sent clientList to all clients.
+@exit @Frank
+Sent clientList to all clients.
+Client has exited gracefully: Frank
+Waiting for a client to connect.
+Client Hello connected to the server.
+Sent clientList to all clients.
+Waiting for a client to connect.
+Client Client1 connected to the server.
+Sent clientList to all clients.
+@broadcast @Hello Who's there?
+Sending message.
+Done looping through enumeration.
+@send @Hello @Client1 Your worst nightmare
+@kick Client1,
+Client1
+Trying to kick: Client1
+Sent clientList to all clients.
+@exit @Client1
+Sending exit notice.
+Sent clientList to all clients.
+Client has exited gracefully: Client1
+Waiting for a client to connect.
+Client Client1 connected to the server.
+Sent clientList to all clients.
+Waiting for a client to connect.
+Client Client2 connected to the server.
+Sent clientList to all clients.
+@send @Client1 @Client2 Hello Client1
+@broadcast @Client2 Hello all
+Sending message.
+Sending message.
+Done looping through enumeration.
+@kick Hello,
+Hello
+Trying to kick: Hello
+Sent clientList to all clients.
+@exit @Hello
+Sending exit notice.
+Sending exit notice.
+Sent clientList to all clients.
+Client has exited gracefully: Hello
+@exit @Client1
+Sending exit notice.
+Sent clientList to all clients.
+Client has exited gracefully: Client1
+@broadcast @Client2 I'm quitting
+Done looping through enumeration.
+@exit @Client2
+Sent clientList to all clients.
+Client has exited gracefully: Client2
