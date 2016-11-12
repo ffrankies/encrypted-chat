@@ -8,9 +8,28 @@ import java.io.DataOutputStream;
 
 import java.nio.channels.IllegalBlockingModeException;
 
-//import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Enumeration;
+
+import javax.crypto.SecretKey;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.BadPaddingException;
+import javax.crypto.AEADBadTagException;
+import javax.crypto.spec.IvParameterSpec;
+
+import java.security.InvalidKeyException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.PrivateKey;
+import java.security.spec.*;
+
+// import java.lang.IllegalStateException;
+
+
+import javax.xml.bind.DatatypeConverter;
 
 /******************************************************************************
  * A simple chat server.
@@ -68,6 +87,12 @@ public class Server {
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
+    /** The public key used for RSA encryption. */
+    private static PublicKey publicKey;
+    
+    /** The private key used for RSA decryption. */
+    private static PrivateKey privateKey;
+    
     /** 
      * A map using client names as keys and client output streams as values.
      * Contains all the currently connected clients.
@@ -75,9 +100,207 @@ public class Server {
     private static ConcurrentHashMap<String,DataOutputStream> clientOutputs = 
         new ConcurrentHashMap<String,DataOutputStream>();
     
-    /** The Server's IP address */
-    //private static final String ipAddress = "127.0.0.1";
+    /**************************************************************************
+     * Encrypts plaintext into ciphertext, given a provided secret key and 
+     * IvParameterSpec.
+     * @param plainText is the plaintext to be encrypted
+     * @param secretKey is the secret key used to encrypt the plaintext data
+     * @param iv is the initialization vector used to initialize the encryption
+     * cipher
+     * @return a byte array containing the encrypted data
+     *************************************************************************/
+    private byte[] encrypt(byte[] plainText, SecretKey secretKey, 
+        IvParameterSpec iv) {
+        try {
+            Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            c.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+            byte[] cipherText = c.doFinal(plainText);
+            return cipherText;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Specified algorithm doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (NoSuchPaddingException e) {
+            System.err.println("Specified padding doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (InvalidKeyException e) {
+            System.err.println("The encryption key doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (InvalidAlgorithmParameterException e) {
+            System.err.println("The algorithm parameter isn't valid.");
+            e.printStackTrace();
+            return plainText;
+        } catch (IllegalStateException e) {
+            System.err.println("The cipher is in the wrong state.");
+            e.printStackTrace();
+            return plainText;
+        } catch (IllegalBlockSizeException e) {
+            System.err.println("Unable to process input data.");
+            e.printStackTrace();
+            return plainText;
+        } catch (AEADBadTagException e) {
+            System.err.println("Authentication tag doesn't match calculated "
+                + "value.");
+            e.printStackTrace();
+            return plainText;
+        } catch (BadPaddingException e) {
+            System.err.println("Data not bounded by the appropriate padding.");
+            e.printStackTrace();
+            return plainText;
+        }
+    }
     
+    /**************************************************************************
+     * Decrypts ciphertext into plaintext, given a provided secret key and 
+     * IvParameterSpec.
+     * @param cipherText is the ciphertext to be decrypted
+     * @param secretKey is the secret key used to decrypt the ciphertext data
+     * @param iv is the initialization vector used to initialize the decryption
+     * cipher
+     * @return a byte array containing the decrypted data
+     *************************************************************************/
+    private byte[] decrypt(byte[] cipherText, SecretKey secretKey, 
+        IvParameterSpec iv) {
+        try {
+            Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            c.init(Cipher.DECRYPT_MODE, secretKey, iv);
+            byte[] plainText = c.doFinal(cipherText);
+            return plainText;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Specified algorithm doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (NoSuchPaddingException e) {
+            System.err.println("Specified padding doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (InvalidKeyException e) {
+            System.err.println("The encryption key doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (InvalidAlgorithmParameterException e) {
+            System.err.println("The algorithm parameter isn't valid.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (IllegalStateException e) {
+            System.err.println("The cipher is in the wrong state.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (IllegalBlockSizeException e) {
+            System.err.println("Unable to process input data.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (AEADBadTagException e) {
+            System.err.println("Authentication tag doesn't match calculated "
+                + "value.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (BadPaddingException e) {
+            System.err.println("Data not bounded by the appropriate padding.");
+            e.printStackTrace();
+            return cipherText;
+        }
+    }
+    
+    /**************************************************************************
+     * Uses RSA to encrypt plaintext data. Used here only for establishing a 
+     * private key pair between client and server.
+     * @param plainText is a byte array containing the plaintext to be encrypted
+     * @return a byte array containing the encrypted ciphertext
+     *************************************************************************/
+    private byte[] RSAencrypt(byte[] plainText) {
+        try {
+            Cipher c = Cipher.getInstance(
+                "RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+            c.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] cipherText = c.doFinal(plainText);
+            return cipherText;
+        }catch (NoSuchAlgorithmException e) {
+            System.err.println("Specified algorithm doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (NoSuchPaddingException e) {
+            System.err.println("Specified padding doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (InvalidKeyException e) {
+            System.err.println("The encryption key doesn't exist.");
+            e.printStackTrace();
+            return plainText;
+        } catch (IllegalStateException e) {
+            System.err.println("The cipher is in the wrong state.");
+            e.printStackTrace();
+            return plainText;
+        } catch (IllegalBlockSizeException e) {
+            System.err.println("Unable to process input data.");
+            e.printStackTrace();
+            return plainText;
+        } catch (AEADBadTagException e) {
+            System.err.println("Authentication tag doesn't match calculated "
+                + "value.");
+            e.printStackTrace();
+            return plainText;
+        } catch (BadPaddingException e) {
+            System.err.println("Data not bounded by the appropriate padding.");
+            e.printStackTrace();
+            return plainText;
+        }
+    }
+    
+    /**************************************************************************
+     * Uses RSA to decrypt ciphertext data. Used here only for establishing a 
+     * private key pair between client and server.
+     * @param cipherText is a byte array containing the ciphertext to be 
+     * decrypted
+     * @return a byte array containing the decrypted plaintext
+     *************************************************************************/
+    private byte[] RSAdecrypt(byte[] cipherText) {
+        try {
+            Cipher c = Cipher.getInstance(
+                "RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+            c.init(Cipher.DECRYPT_MODE, privateKey);
+            byte[] plainText = c.doFinal(cipherText);
+            return plainText;
+        } catch (NoSuchAlgorithmException e) {
+            System.err.println("Specified algorithm doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (NoSuchPaddingException e) {
+            System.err.println("Specified padding doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (InvalidKeyException e) {
+            System.err.println("The encryption key doesn't exist.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (IllegalStateException e) {
+            System.err.println("The cipher is in the wrong state.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (IllegalBlockSizeException e) {
+            System.err.println("Unable to process input data.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (AEADBadTagException e) {
+            System.err.println("Authentication tag doesn't match calculated "
+                + "value.");
+            e.printStackTrace();
+            return cipherText;
+        } catch (BadPaddingException e) {
+            System.err.println("Data not bounded by the appropriate padding.");
+            e.printStackTrace();
+            return cipherText;
+        }
+    }
+    
+     /**************************************************************************
+     * Uses RSA to encrypt plaintext data. Used here only for establishing a 
+     * private key pair between client and server.
+     * @param plainText is a byte array containing the plaintext to be encrypted
+     * @return a byte array containing the encrypted ciphertext
+     *************************************************************************/
     public static void main(String[] args) {
         
         // Create the server's socket
