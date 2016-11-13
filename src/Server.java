@@ -523,6 +523,7 @@ public class Server {
             }
             
             String clientName = getClientName(input);
+            
             System.out.println("Client " + clientName + " connected to the "
                 + "server.");
             
@@ -601,8 +602,8 @@ public class Server {
             // System.out.println("Secret key:" + clientKeyStr);
             byte[] encryptedSecret = new byte[256];
             try {
-                int n = input.read(encryptedSecret, 0, 256);
-                System.out.println("Received: " + n);
+                int n = input.readFully(encryptedSecret, 0, 256);
+                System.out.println("Received secret: " + n);
             } catch (IOException e) {
                 e.printStackTrace();
             }
