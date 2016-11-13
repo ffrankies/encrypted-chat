@@ -375,10 +375,12 @@ public class Client {
      ************************************************************/
     public byte[] RSAEncrypt(byte[] plaintext){
         try {
-            Cipher c = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
-            c.init(Cipher.ENCRYPT_MODE,publicKey);
-            byte[] ciphertext=c.doFinal(plaintext);
-             return ciphertext;
+            Cipher c = Cipher.getInstance(
+                "RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+            c.init(Cipher.ENCRYPT_MODE, publicKey);
+            byte[] ciphertext = c.doFinal(plaintext);
+            System.out.println("Encrypted length: " + ciphertext.length);
+            return ciphertext;
         } catch(Exception e) {
             System.out.println("RSA Encrypt Exception");
             System.exit(1);

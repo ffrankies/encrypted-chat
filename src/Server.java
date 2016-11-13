@@ -591,6 +591,7 @@ public class Server {
             byte[] encryptedSecret = null;
             try {
                 encryptedSecret = clientKeyStr.getBytes("ISO-8859-1");
+                System.out.println("Encrypted length: " + encryptedSecret.length);
             } catch (UnsupportedEncodingException e) {
                 System.err.println("Unsupported Encoding supplied");
                 e.printStackTrace();
