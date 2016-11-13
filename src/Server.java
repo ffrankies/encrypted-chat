@@ -603,7 +603,8 @@ public class Server {
             //     e.printStackTrace();
             //     System.exit(1);
             // }
-            return new SecretKeySpec(RSAdecrypt(new String(encryptedSecret).getBytes()), "AES");
+            return new SecretKeySpec(RSAdecrypt(new String(encryptedSecret).getBytes()),
+            "AES/CBC/PKCS5Padding");
         }
         
         /**********************************************************************
