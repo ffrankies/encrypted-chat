@@ -564,7 +564,8 @@ public class Server {
                 // After figuring out the message, encrypt it, then send to its
                 // destination
                 if (command.equals(BROADCAST)) {
-                    byte[] decoded = decode(parsedMessage[1], message);
+                    byte[] decoded = decode(parsedMessage[1], message, 
+                        parsedMessage[3]);
                     //broadcast(message, output);
                 }
                 // } else if (command.equals(SEND)) {
@@ -818,11 +819,21 @@ public class Server {
          * ciphertext.
          * @param clientName is the name of the sending Client.
          * @param buffer contains the cipherText.
+         * @param sizeStr is a String containing the size of the message to be
+         * decoded
          * @return a byte buffer containing the decoded text.
          *********************************************************************/
-        private static byte[] decode(String clientName, byte[] buffer) {
-            byte[] cipherText = new byte[1024 - 35];
-            for (int i = 35; i < buffer.length; ++i) {
+        private static byte[] decode(String clientName, byte[] buffer, 
+            String sizeStr) {
+            int size = 0;
+            try {
+                size = Integer.parseInt(sizeStr);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+            byte[] cipherText = new byte[size];
+            for (int i = 35; i < size + 35; ++i) {
                 cipherText[i - 35] = buffer[i];
             }
             byte[] decoded = decrypt(cipherText, clientKeys.get(clientName), 
