@@ -94,22 +94,22 @@ public class Client {
     private static final String BROADCAST = "@bcst";
     
     /** The send code - sends a message to some or one client(s). */
-    private static final String SEND = "@send ";
+    private static final String SEND = "@send";
     
     /** The kick code - kicks a specified client off the chat. */
     private static final String KICK = "@kick";
     
     /** The client list code - sends list of clients to all clients. */
-    private static final String CLIENTLIST = "@clientlist";
+    private static final String CLIENTLIST = "@list";
         
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
     /** The key code - lets the server know that message contains secret key. */
-    private static final String KEY = "@key";
+    private static final String KEY = "@pkey";
     
     /** The iv code - sends initialization vector to Server. */
-    private static final String IV = "@iv ";
+    private static final String IV = "@ivec";
     
     /** The public key used to encrypt our symmetric key. */
     private PublicKey publicKey;

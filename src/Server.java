@@ -95,16 +95,16 @@ public class Server {
     private static final String KICK = "@kick";
     
     /** The client list code - sends list of clients to all clients. */
-    private static final String CLIENTLIST = "@clientlist";
+    private static final String CLIENTLIST = "@list";
     
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
     /** The key code - tells the client they are receiving the public key. */
-    private static final String KEY = "@key";
+    private static final String KEY = "@pkey";
     
     /** The iv code - sends initialization vector to Server. */
-    private static final String IV = "@iv";
+    private static final String IV = "@ivec";
     
     /** The public key used for RSA encryption. */
     private static PublicKey publicKey;
