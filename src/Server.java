@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.DataInputStream;
+import java.io.InputStream;
 
 import java.nio.channels.IllegalBlockingModeException;
 
@@ -484,6 +486,21 @@ public class Server {
         @Override
         public void run() {
             
+            DataInputStream secretInput = null;
+            try {
+                secretInput = new DataInputStream(
+                    clientSocket.getInputStream());
+            } catch (IOException e) {
+                System.err.println("Couldn't establish D.O.Stream.");
+                e.printStackTrace();
+                System.exit(1);
+            }
+            
+            // Receive and decrypt the symmetric key from the Client
+            SecretKey clientKey = getSecretKey(secretInput);
+            
+            IvParameterSpec iv = getIV(secretInput);
+            
             BufferedReader input = null;
             try {
                 input = new BufferedReader(new InputStreamReader(
@@ -506,12 +523,6 @@ public class Server {
             }
             
             String clientName = getClientName(input);
-            
-            // Receive and decrypt the symmetric key from the Client
-            SecretKey clientKey = getSecretKey(input);
-            
-            IvParameterSpec iv = getIV(input);
-            
             System.out.println("Client " + clientName + " connected to the "
                 + "server.");
             
@@ -576,7 +587,7 @@ public class Server {
          * @param input is the BufferedReader that reads data from the client
          * @return the client's secret key as a SecretKey object
          **********************************************************************/
-        private static SecretKey getSecretKey(BufferedReader input) {
+        private static SecretKey getSecretKey(InputStream input) {
             // String clientKeyStr = receiveMessage(input);
             // String code = clientKeyStr.substring(0, clientKeyStr.indexOf(" "));
             // if (!code.equals(KEY)) {
@@ -588,7 +599,7 @@ public class Server {
             // clientKeyStr = clientKeyStr.substring(
             //     clientKeyStr.indexOf(" ") + 1);
             // System.out.println("Secret key:" + clientKeyStr);
-            char[] encryptedSecret = new char[256];
+            byte[] encryptedSecret = new byte[256];
             try {
                 int n = input.read(encryptedSecret, 0, 256);
                 System.out.println("Received: " + n);
@@ -603,7 +614,7 @@ public class Server {
             //     e.printStackTrace();
             //     System.exit(1);
             // }
-            return new SecretKeySpec(RSAdecrypt(new String(encryptedSecret).getBytes()),"AES");
+            return new SecretKeySpec(RSAdecrypt(encryptedSecret), "AES");
         }
         
         /**********************************************************************
@@ -612,16 +623,24 @@ public class Server {
          * @param input is the BufferedReader that reads data from the client
          * @return the initialization vector as an IvParameterSpec object
          *********************************************************************/
-        private static IvParameterSpec getIV(BufferedReader input) {
-            String ivStr = receiveMessage(input);
-            String code = ivStr.substring(0, ivStr.indexOf(" "));
-            if (!code.equals(IV)) {
-                System.err.println("Got something else instead of the IV.");
-                System.err.println(ivStr);
+        private static IvParameterSpec getIV(InputStream input) {
+            // String ivStr = receiveMessage(input);
+            // String code = ivStr.substring(0, ivStr.indexOf(" "));
+            // if (!code.equals(IV)) {
+            //     System.err.println("Got something else instead of the IV.");
+            //     System.err.println(ivStr);
+            //     System.exit(1);
+            // }
+            // ivStr = ivStr.substring(ivStr.indexOf(" ") + 1);
+            byte[] ivBuffer = new byte[16];
+            try {
+                int n = input.read(ivBuffer, 0, 16);
+                System.out.println(n + "bytes of iv read.");
+            } catch (IOException e) {
+                e.printStackTrace();
                 System.exit(1);
             }
-            ivStr = ivStr.substring(ivStr.indexOf(" ") + 1);
-            return new IvParameterSpec(ivStr.getBytes());
+            return new IvParameterSpec(ivBuffer);
         }
         /**********************************************************************
          * Sends a message to all clients except the one that requested the 
