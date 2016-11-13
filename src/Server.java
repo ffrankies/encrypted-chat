@@ -577,27 +577,32 @@ public class Server {
          * @return the client's secret key as a SecretKey object
          **********************************************************************/
         private static SecretKey getSecretKey(BufferedReader input) {
-            String clientKeyStr = receiveMessage(input);
-            String code = clientKeyStr.substring(0, clientKeyStr.indexOf(" "));
-            if (!code.equals(KEY)) {
-                System.err.println("Got something else instead of the key.");
-                System.err.println(clientKeyStr);
-                System.exit(1);
-            }
-            System.out.println("Secret key:" + clientKeyStr);
-            clientKeyStr = clientKeyStr.substring(
-                clientKeyStr.indexOf(" ") + 1);
-            System.out.println("Secret key:" + clientKeyStr);
-            byte[] encryptedSecret = null;
+            // String clientKeyStr = receiveMessage(input);
+            // String code = clientKeyStr.substring(0, clientKeyStr.indexOf(" "));
+            // if (!code.equals(KEY)) {
+            //     System.err.println("Got something else instead of the key.");
+            //     System.err.println(clientKeyStr);
+            //     System.exit(1);
+            // }
+            // System.out.println("Secret key:" + clientKeyStr);
+            // clientKeyStr = clientKeyStr.substring(
+            //     clientKeyStr.indexOf(" ") + 1);
+            // System.out.println("Secret key:" + clientKeyStr);
+            char[] encryptedSecret = new char[256];
             try {
-                encryptedSecret = clientKeyStr.getBytes("ISO-8859-1");
-                System.out.println("Encrypted length: " + encryptedSecret.length);
-            } catch (UnsupportedEncodingException e) {
-                System.err.println("Unsupported Encoding supplied");
+                input.read(encryptedSecret, 0, 256);
+            } catch (IOException e) {
                 e.printStackTrace();
-                System.exit(1);
             }
-            return new SecretKeySpec(RSAdecrypt(encryptedSecret), "AES");
+            // try {
+            //     encryptedSecret = clientKeyStr.getBytes("ISO-8859-1");
+            //     System.out.println("Encrypted length: " + encryptedSecret.length);
+            // } catch (UnsupportedEncodingException e) {
+            //     System.err.println("Unsupported Encoding supplied");
+            //     e.printStackTrace();
+            //     System.exit(1);
+            // }
+            return new SecretKeySpec(RSAdecrypt(new String(encryptedSecret).getBytes()), "AES");
         }
         
         /**********************************************************************

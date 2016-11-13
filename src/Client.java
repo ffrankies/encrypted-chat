@@ -326,7 +326,7 @@ public class Client {
             e.printStackTrace();
         }
         try {
-            output.writeBytes(KEY + " " + keyStr + '\n');
+            output.write(encryptedsecret, 0, 256);
         } catch (IOException e) {
             System.err.println("Couldn't send symmetric key to server.");
             e.printStackTrace();
