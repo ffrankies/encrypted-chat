@@ -569,8 +569,8 @@ public class Server {
                 byte[] message = receiveBytes(secretInput);
                 String[] parsedMessage = parseMessage(message);
                 String command = parsedMessage[0];
-                String sender = parsedMessage[1].trim();
-                String receiver = parsedMessage[2].trim();
+                String receiver = parsedMessage[1].trim();
+                String sender = parsedMessage[2].trim();
                 String size = parsedMessage[3].trim();
                 // Watch for a condition if the message is the key before we 
                 // can start decrypting and figuring out the message
@@ -580,11 +580,9 @@ public class Server {
                 // destination
                 if (command.equals(BROADCAST)) {
                     broadcast(message, sender, size);
-                    //byte[] decoded = decode(sender, message, size);
-                    //broadcast(message, output);
+                } else if (command.equals(SEND)) {
+                    send(message, sender, receiver, size);
                 }
-                // } else if (command.equals(SEND)) {
-                //     send(message);
                 // } else if (command.equals(KICK)) {
                 //     kick(message);
                 // } else if (command.equals(EXIT)) {
@@ -686,66 +684,43 @@ public class Server {
             }
         }
         
-        /**********************************************************************
-         * Sends a message to all clients except the one that requested the 
-         * broadcast.
-         * @param message is the message to be sent.
-         * @param output is the outputstream of the sender.
-         **********************************************************************/
-        private static void broadcast(String message, OutputStream output) {
-            for (Enumeration<DataOutputStream> outputs = 
-                clientOutputs.elements(); outputs.hasMoreElements(); ) {
-                DataOutputStream thisOutput = outputs.nextElement();
-                if (!output.equals(thisOutput)) {
-                    System.out.println("Sending message.");
-                    //message = new String(encrypt(message.getBytes()));
-                    try {
-                        thisOutput.writeBytes(message + "\n");
-                    } catch (IOException e) {
-                        System.err.println("Could not send data to "
-                            + "client.");
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        
         /***********************************************************************
          * Sends a message addressed to a particular Client.
-         * @param message is the message to be sent.
+         * @param message is the message to be sent, in byte format.
+         * @param sender is the message's source Client
+         * @param receiver is the message's destination Client
+         * @param sizeStr is the size of the encoded message, in String format
          **********************************************************************/
-        private static void send(String message) {
-            // Cut out SEND code
-            message = message.substring(message.indexOf(" ") + 1);
-            String destination = message.substring(
-                0, message.indexOf(" "));
-            // Cut out DESTINATION name
-            message = message.substring(message.indexOf(" ") + 1);
-            // Reinsert SEND code
-            message = SEND + " " + message + "\n";
-            DataOutputStream thisOutput = 
-                clientOutputs.get(destination.substring(1));
-            try {
-                thisOutput.writeBytes(message);
-            } catch (IOException e) {
-                System.err.println("Could not send data to " + 
-                    destination);
-                e.printStackTrace();
+        private static void send(byte[] message, String sender, String receiver, 
+            String sizeStr) {
+            byte[] decoded = decode(sender, message, sizeStr);
+            // Find the destination client
+            for (Enumeration<String> clients = clientOutputs.keys(); 
+                clients.hasMoreElements(); ) {
+                String client = clients.nextElement();
+                if (client.equals(receiver)) {
+                    byte[] encoded = encrypt(decoded, clientKeys.get(client), 
+                        clientIVs.get(client));
+                    String size = String.format("%10d", encoded.length);
+                    try {
+                        System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
+                            message, 25, 10);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    try {
+                        clientOutputs.get(client).write(
+                            message, 0, 1024 + 35);
+                    } catch (IOException e) {
+                        System.err.println("Couldn't send broadcast message.");
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                    break; // No need to loop through others
+                }
             }
-            // Alternative way to send the message with cleaner code
-            // Not sure it would work, but it would be worth a try
-            // String[] messageStr = message.split(" ");
-            // destination = messageStr[1];
-            // message = SEND + " " + messageStr[2] + "\n";
-            // DataOutputStream thisOutput = 
-            //     clientOutputs.get(destination.substring(1));
-            // try {
-            //     thisOutput.writeBytes(message);
-            // } catch (IOException e) {
-            //     System.err.println("Could not send data to " + 
-            //         destination);
-            //     e.printStackTrace();
-            // }
         }
         
         /**********************************************************************
@@ -844,7 +819,7 @@ public class Server {
          * @param buffer is the buffer of bytes from the Client
          * @return an array of Strings comprised of:
          * [0] the message Code (@send, @kick, etc)
-         * [1] optional parameter (destination/source)
+         * [1] optional parameter (destination)
          * [2] optional parameter (source)
          * [3] the size of the message, if there is one one
          * [4] the encrypted message - most likely not going to be used
@@ -863,7 +838,8 @@ public class Server {
                 System.exit(1);
             }
             for (String s: parsed) {
-                System.out.println(s);
+                if (!s.isEmpty())
+                    System.out.println(s.trim());
             }
             return parsed;
         }

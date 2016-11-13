@@ -251,7 +251,7 @@ public class Client {
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
             System.arraycopy(broadcast, 0, buffer, 0, 5);
-            System.arraycopy(sender, 0, buffer, 5, 10);
+            System.arraycopy(sender, 0, buffer, 15, 10);
             System.arraycopy(size, 0, buffer, 25, 10);
             System.arraycopy(msg, 0, buffer, 35, msg.length);
         } catch (UnsupportedEncodingException e) {
@@ -374,7 +374,8 @@ public class Client {
             System.exit(1);
         }
         for (String s: parsed) {
-            System.out.println(s);
+            if (!s.isEmpty())
+                System.out.println(s.trim());
         }
         return parsed;
     }   
