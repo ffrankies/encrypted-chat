@@ -555,37 +555,21 @@ public class Server {
             }
             
             while (true) {
-                // String message = "";
-                // try {
-                //     message = input.readLine();
-                // } catch (IOException e) {
-                //     System.err.println("Could not read from client socket. " 
-                //         + clientName);
-                //     e.printStackTrace();
-                //     System.exit(1);
-                // }
-                // System.out.println(message);
-                // String command = message.substring(0, message.indexOf(" "));
                 byte[] message = receiveBytes(secretInput);
                 String[] parsedMessage = parseMessage(message);
                 String command = parsedMessage[0];
                 String receiver = parsedMessage[1].trim();
                 String sender = parsedMessage[2].trim();
                 String size = parsedMessage[3].trim();
-                // Watch for a condition if the message is the key before we 
-                // can start decrypting and figuring out the message
-                // This condition will mostly likely be hit once when the
-                // first message is received from the client
-                // After figuring out the message, encrypt it, then send to its
-                // destination
+                
+                // Perform operations based on the command from the Client
                 if (command.equals(BROADCAST)) {
                     broadcast(message, sender, size);
                 } else if (command.equals(SEND)) {
                     send(message, sender, receiver, size);
-                }
-                // } else if (command.equals(KICK)) {
-                //     kick(message);
-                // } else if (command.equals(EXIT)) {
+                } else if (command.equals(KICK)) {
+                    kick(message, sender, size);
+                } //else if (command.equals(EXIT)) {
                 //     exit(message, output, clientName);
                 //     // Completes while loop and ends this thread
                 //     break;
@@ -725,60 +709,96 @@ public class Server {
         
         /**********************************************************************
          * Kicks a particular Client from the conversation.
-         * @param message is a String that contains the kick message.
+         * @param message is a byte array that contains the kick message.
+         * @param sender is the person who sent the kick command
+         * @sizeStr is the size of the kick message, formatted as a String
          **********************************************************************/
-        private static void kick(String message) {
+        private static void kick(byte[] message, String sender, 
+            String sizeStr) {
             // Take kick command out of message
-            message = message.substring(message.indexOf(" ") + 1);
-            String[] clients = message.split(",");
-            for (String c: clients) 
-                System.out.println(c);
+            byte[] decoded = decrypt(message, clientKeys.get(sender), 
+                clientIVs.get(sender));
+            String msg = "";
+            try {
+                msg = new String(decoded, "ISO-8859-1");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
+            String[] clients = msg.split(",");
             for(int i = 0; i < clients.length; ++i){
                 System.out.println("Trying to kick: " + clients[i]);
-                DataOutputStream thisOutput = clientOutputs.get(
-                    clients[i]);
-                try{
-                    // Tells client it is being kicked
-                    thisOutput.writeBytes("@kick \n");
-                } catch(IOException e){
-                    System.err.println("Could not close"+ 
-                    " DataOutputStream");
+                byte[] encoded = encrypt(decoded, clientKeys.get(clients[i]), 
+                    clientIVs.get(clients[i]));
+                String size = String.format("%10d", encoded.length);
+                try {
+                    System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
+                        message, 25, 10);
+                } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
+                    System.exit(1);
+                }
+                System.arraycopy(encoded, 0, message, 35, encoded.length);
+                try {
+                    clientOutputs.get(clients[i]).write(
+                        message, 0, 1024 + 35);
+                } catch (IOException e) {
+                    System.err.println("Couldn't send broadcast message.");
+                    e.printStackTrace();
+                    System.exit(1);
                 }
             }
-            sendClientList();
+            //sendClientList();
         }
         
         /**********************************************************************
          * Allows a Client to exit from the conversation.
          * @param message is a String containing the exit message
-         * @param output is the Client's output stream
-         * @param clientName is the name of the exiting client
+         * @param sender is the name of the source Client
          *********************************************************************/
-        private static void exit(String message, DataOutputStream output, 
-            String clientName) {
+        private static void exit(byte[] message, String sender) {
             // Confirm to Client that it can disconnect
             try {
-                output.writeBytes("@exit \n");
+                clientOutputs.get(sender).write(message, 0, 1024 + 35);
             } catch (IOException e) {
                 System.err.println("Could not send exit notice back"
                     + " to client.");
                 e.printStackTrace();
             }
             // Alert other users that client is disconnecting 
-            message = SEND + " " + clientName + " has disconnected " 
-                + "gracefully.\n";
-            for (Enumeration<DataOutputStream> outputs = 
-                clientOutputs.elements(); outputs.hasMoreElements(); ) {
-                DataOutputStream thisOutput = outputs.nextElement();
-                if (!output.equals(thisOutput)) {
-                    System.out.println("Sending exit notice.");
+            String msg = sender + " has disconnected gracefully.";
+            for (Enumeration<String> clients = clientOutputs.keys(); 
+                clients.hasMoreElements(); ) {
+                String client = clients.nextElement(); 
+                byte[] decoded = new byte[1024];
+                try {
+                    decoded = client.getBytes("ISO-8859-1");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+                if (!sender.equals(client)) {
+                    //Encode the data
+                    byte[] encoded = encrypt(decoded, clientKeys.get(client), 
+                        clientIVs.get(client));
+                    String size = String.format("%10d", encoded.length);
                     try {
-                        thisOutput.writeBytes(message);
-                    } catch (IOException e) {
-                        System.err.println("Could not send exit notice"
-                            + " to client.");
+                        byte[] send = SEND.getBytes("ISO-8859-1");
+                        System.arraycopy(send, 0, message, 0, 5);
+                        System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
+                            message, 25, 10);
+                    } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
+                        System.exit(1);
+                    }
+                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    try {
+                        clientOutputs.get(client).write(
+                            message, 0, 1024 + 35);
+                    } catch (IOException e) {
+                        System.err.println("Couldn't send exit notice.");
+                        e.printStackTrace();
+                        System.exit(1);
                     }
                 }
             }
@@ -789,7 +809,9 @@ public class Server {
                 System.err.println("Couldn't close client socket.");
                 e.printStackTrace();
             }
-            clientOutputs.remove(clientName);
+            clientOutputs.remove(sender);
+            clientKeys.remove(sender);
+            clientIVs.remove(sender);
             sendClientList();
         }
         

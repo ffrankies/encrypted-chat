@@ -179,10 +179,8 @@ public class Controller implements ActionListener {
                     namesToKick += checkboxes[i].getText()+",";
                 }
             }
-            String namesToKickCopy = namesToKick.substring(0,
-                                        namesToKick.length());
-            client.sendKick(namesToKickCopy);
-            
+            namesToKick = namesToKick.substring(0, namesToKick.length());
+            client.sendKick(namesToKick);
         } else if (e.getSource() instanceof JButton && e.getSource() == help) {
             
         }
