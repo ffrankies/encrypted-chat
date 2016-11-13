@@ -9,10 +9,21 @@ import java.net.Socket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.Cipher;
+
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.*;
+import java.security.NoSuchAlgorithmException;
+
 import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.InputStreamReader;
+import java.io.File;
+import java.io.FileInputStream;
 
 /******************************************************************************
  * A Client in an encrypted chat program.
@@ -24,7 +35,7 @@ public class Client {
     
     /**
      * TO-DO
-     * 
+     * Part 1
      * - Connect to Server
      * - Must request and receive list of clients to all other clients
      * - Support sending to individual clients
@@ -34,6 +45,10 @@ public class Client {
      *   - More administrative commands?
      * - Have a GUI for all this to be done
      * - Should have a name
+     * Part 2
+     * - Receive RSA public key from server at connection 
+     * - Send the server our generated symmetric key
+     * - Decrypt the messages sent by the server
      * 
      */
     
@@ -81,6 +96,18 @@ public class Client {
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
+    /** The key code - lets the client know when the public key is received. */
+    private static final String KEY = "@key";
+    
+    /** The public key sent to the client by the server */
+    private PublicKey publicKey;
+    
+    /** 
+     * This client's secret key, used to encrypt and decrypt messages to and
+     * from the Server.
+     */
+    private SecretKey secretKey;
+    
     /** Reads data from the server. */
     private  BufferedReader input;
     
@@ -98,6 +125,8 @@ public class Client {
         
         this.name = name;
         this.serverIP = serverIP;
+        setPublicKey("RSApub.der");
+        secretKey = generateAESKey();
         
         try {
             socket = new Socket(InetAddress.getByName(serverIP), port);
@@ -132,6 +161,26 @@ public class Client {
             System.exit(1);
         }
         
+    }
+        
+    /**************************************************************************
+     * Reads the server's public key. Used for decrypting the secret key
+     * @param filename is the local file containing the public key
+     * ***********************************************************************/
+    private void setPublicKey(String filename){
+        try {
+            File f = new File(filename);
+            FileInputStream fs = new FileInputStream(f);
+            byte[] keybytes = new byte[(int)f.length()];
+            fs.read(keybytes);
+            fs.close();
+            X509EncodedKeySpec keyspec = new X509EncodedKeySpec(keybytes);
+            KeyFactory rsafactory = KeyFactory.getInstance("RSA");
+            publicKey = rsafactory.generatePublic(keyspec);
+        } catch(Exception e) {
+            System.out.println("Public Key Exception");
+            System.exit(1);
+        }
     }
     
     /**************************************************************************
@@ -212,6 +261,7 @@ public class Client {
      *************************************************************************/
     public void sendName() {
         try {
+            // Maybe send the name and the symmetric at the same time?
             output.writeBytes(name + "\n");
         } catch (IOException e) {
             System.err.println("Could not send Client name to the server.");
@@ -246,6 +296,60 @@ public class Client {
             alertExit();
         }
         return message.substring(message.indexOf(" ") + 1);
+    }
+    
+    /************************************************************
+     * Sends the symmetric key to the server after encrypting it
+    ************************************************************/
+    public void sendSymmetricKey(){
+        byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
+        String keyStr = new String(encryptedsecret);
+        try {
+            output.writeBytes(KEY + " " + keyStr + '\n');
+        } catch (IOException e) {
+            System.err.println("Couldn't send symmetric key to server.");
+            e.printStackTrace();
+        }
+        /*
+          TO-DO STILL
+          - Receive the key on the server side correctly in the logic
+          - Start decrypting client messages on the server side with this key
+        */
+    }
+    
+    /*******************************************************
+     * Generate a symmetric to share with the server
+     * Have to figure out where this goes in the logic later
+     *******************************************************/
+    public SecretKey generateAESKey(){
+        try {
+            KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+            keyGen.init(128);
+            SecretKey secKey = keyGen.generateKey();
+            return secKey;
+        } catch (NoSuchAlgorithmException e){
+            System.out.println("Encryption algorithm doesn't exist.");
+            System.exit(1);
+            return null;
+        }
+    }
+    
+    /**********************************************************
+     * Encrypts the symmetric key using the server's public key
+     * @param plaintext the key to be encrypted
+     * @return an encrypted byte of data to be sent to the server
+     ************************************************************/
+    public byte[] RSAEncrypt(byte[] plaintext){
+        try {
+            Cipher c = Cipher.getInstance("RSA/ECB/OAEPWithSHA-1AndMGF1Padding");
+            c.init(Cipher.ENCRYPT_MODE,publicKey);
+            byte[] ciphertext=c.doFinal(plaintext);
+             return ciphertext;
+        } catch(Exception e) {
+            System.out.println("RSA Encrypt Exception");
+            System.exit(1);
+            return null;
+        }
     }
     
     /**************************************************************************
@@ -293,4 +397,6 @@ public class Client {
         System.out.println("Done closing the input and output.");
     }
     
+    
+     
 }
