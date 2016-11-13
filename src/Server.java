@@ -584,8 +584,10 @@ public class Server {
                 System.err.println(clientKeyStr);
                 System.exit(1);
             }
+            System.out.println("Secret key:" + clientKeyStr);
             clientKeyStr = clientKeyStr.substring(
                 clientKeyStr.indexOf(" ") + 1);
+            System.out.println("Secret key:" + clientKeyStr);
             byte[] encryptedSecret = null;
             try {
                 encryptedSecret = clientKeyStr.getBytes("UTF-8");
