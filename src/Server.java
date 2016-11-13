@@ -557,6 +557,9 @@ public class Server {
                 byte[] message = receiveBytes(secretInput);
                 String[] parsedMessage = parseMessage(message);
                 String command = parsedMessage[0];
+                String sender = parsedMessage[1].trim();
+                String receiver = parsedMessage[2].trim();
+                String size = parsedMessage[3].trim();
                 // Watch for a condition if the message is the key before we 
                 // can start decrypting and figuring out the message
                 // This condition will mostly likely be hit once when the
@@ -564,8 +567,8 @@ public class Server {
                 // After figuring out the message, encrypt it, then send to its
                 // destination
                 if (command.equals(BROADCAST)) {
-                    byte[] decoded = decode(parsedMessage[1], message, 
-                        parsedMessage[3]);
+                    broadcast(message, sender, size);
+                    //byte[] decoded = decode(sender, message, size);
                     //broadcast(message, output);
                 }
                 // } else if (command.equals(SEND)) {
@@ -630,6 +633,45 @@ public class Server {
                 System.exit(1);
             }
             return new IvParameterSpec(ivBuffer);
+        }
+        
+        /**********************************************************************
+         * Sends a message to all clients except the one that requested the 
+         * broadcast.
+         * @param message is the decoded message to be sent.
+         * @param sender is the sender of the message.
+         * @param sizeStr is the size of the encoded message
+         *********************************************************************/
+        private static void broadcast(byte[] message, String sender, 
+            String sizeStr) {
+            byte[] decoded = decode(sender, message, sizeStr);
+            // Loop through connected clients
+            for (Enumeration<String> clients = clientOutputs.keys(); 
+                 clients.hasMoreElements(); ) {
+                String clientName = clients.nextElement();
+                if (!sender.equals(clientName)) {
+                    //Encode the data
+                    byte[] encoded = encrypt(decoded, 
+                        clientKeys.get(clientName), clientIVs.get(clientName));
+                    String size = String.format("%10d", encoded.length);
+                    try {
+                        System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
+                            message, 25, 10);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    try {
+                        clientOutputs.get(clientName).write(
+                            message, 0, 1024 + 35);
+                    } catch (IOException e) {
+                        System.err.println("Couldn't send broadcast message.");
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                }
+            }
         }
         
         /**********************************************************************
