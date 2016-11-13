@@ -398,6 +398,7 @@ public class Client {
             return EXIT;
         } else if (code.equals(KICK)){
             alertExit();
+            return "You have been kicked by: " + sender;
         }
         return sender.toUpperCase() + ": " + messageStr;
     }

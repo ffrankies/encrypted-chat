@@ -569,15 +569,15 @@ public class Server {
                     send(message, sender, receiver, size);
                 } else if (command.equals(KICK)) {
                     kick(message, sender, size);
-                } //else if (command.equals(EXIT)) {
-                //     exit(message, output, clientName);
-                //     // Completes while loop and ends this thread
-                //     break;
-                //} // if statement
+                } else if (command.equals(EXIT)) {
+                    exit(message, sender);
+                    // Completes while loop and ends this thread
+                    break;
+                } // if statement
                 
             }  // while loop 
             
-            //System.out.println("Client has exited gracefully: " + clientName);
+            System.out.println("Client has exited gracefully: " + clientName);
         }
             
         /**********************************************************************
