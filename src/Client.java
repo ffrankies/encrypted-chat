@@ -221,7 +221,8 @@ public class Client {
         byte[] buffer = new byte[1024 + 35];
         try {
             byte[] send = SEND.getBytes("ISO-8859-1");
-            byte[] receiver = otherClient.getBytes("ISO-8859-1");
+            byte[] receiver = Arrays.copyOf(
+                otherClient.getBytes("ISO-8859-1"), 10);
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = message.getBytes("ISO-8859-1");
             msg = encrypt(msg);
