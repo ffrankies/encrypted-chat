@@ -827,7 +827,7 @@ public class Server {
             String sizeStr) {
             int size = 0;
             try {
-                size = Integer.parseInt(sizeStr);
+                size = Integer.parseInt(sizeStr.trim());
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 System.exit(1);
