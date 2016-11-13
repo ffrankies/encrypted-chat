@@ -716,8 +716,7 @@ public class Server {
         private static void kick(byte[] message, String sender, 
             String sizeStr) {
             // Take kick command out of message
-            byte[] decoded = decrypt(message, clientKeys.get(sender), 
-                clientIVs.get(sender));
+            byte[] decoded = decode(sender, message, sizeStr);
             String msg = "";
             try {
                 msg = new String(decoded, "ISO-8859-1");
