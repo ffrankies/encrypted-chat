@@ -590,7 +590,8 @@ public class Server {
             // System.out.println("Secret key:" + clientKeyStr);
             char[] encryptedSecret = new char[256];
             try {
-                input.read(encryptedSecret, 0, 256);
+                int n = input.read(encryptedSecret, 0, 256);
+                System.out.println("Received: " + n);
             } catch (IOException e) {
                 e.printStackTrace();
             }
