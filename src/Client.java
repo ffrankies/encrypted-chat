@@ -318,13 +318,13 @@ public class Client {
     ************************************************************/
     public void sendSymmetricKey() {
         byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
-        String keyStr = "";
-        try {
-            keyStr = new String(encryptedsecret, "ISO-8859-1");
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("Unsupported Encoding supplied.");
-            e.printStackTrace();
-        }
+        // String keyStr = "";
+        // try {
+        //     keyStr = new String(encryptedsecret, "ISO-8859-1");
+        // } catch (UnsupportedEncodingException e) {
+        //     System.err.println("Unsupported Encoding supplied.");
+        //     e.printStackTrace();
+        // }
         try {
             output.write(encryptedsecret, 0, 256);
         } catch (IOException e) {
@@ -343,7 +343,8 @@ public class Client {
     public void sendInitializationVector() {
     	String ivStr = new String(iv.getIV());
     	try {
-    	    output.writeBytes(IV + ivStr + "\n");
+    	    output.write(iv.getIV(), 0, iv.getIV().length);
+    	    System.out.println(iv.getIV().length + " length of IV.");
     	} catch (IOException e) {
     	    System.err.println("Couldn't send initialization vector.");
     	    e.printStackTrace();
