@@ -331,15 +331,37 @@ public class Client {
      * Alerts the server that this Client is disconnecting.
      *************************************************************************/
     public void alertExit() {
-        System.out.println("Alerting server of exit");
+        /*
+         * Message format:
+         * @exit (5 bytes)
+         *       (10 bytes)
+         * SenderName (10 bytes)
+         * size (10 bytes)
+         * users (1024 bytes)
+         */
+        byte[] buffer = new byte[1024 + 35];
         try {
-            output.writeBytes(EXIT + " @" + name + "\n");
-        } catch (IOException e) {
-            System.err.println("Could not send Exit alert to the server.");
+            byte[] exit = EXIT.getBytes("ISO-8859-1");
+            byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
+            byte[] msg = "Nothing To See Here".getBytes("ISO-8859-1");
+            msg = encrypt(msg);
+            byte[] size = 
+                String.format("%10d", msg.length).getBytes("ISO-8859-1");
+            System.arraycopy(exit, 0, buffer, 0, 5);
+            System.arraycopy(sender, 0, buffer, 15, 10);
+            System.arraycopy(size, 0, buffer, 25, 10);
+            System.arraycopy(msg, 0, buffer, 35, msg.length);
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return;
+            System.exit(1);
         }
-        System.out.println("Done alerting server of exit");
+        try {
+            output.write(buffer, 0, 1024);
+        } catch (IOException e) {
+            System.err.println("Couldn't send encrypted message.");
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
     
     /**************************************************************************
