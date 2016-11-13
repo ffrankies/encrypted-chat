@@ -27,12 +27,12 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 
 import java.io.IOException;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
+import java.io.InputStream;
+import java.io.DataInputStream;
 
 /******************************************************************************
  * A Client in an encrypted chat program.
@@ -124,7 +124,7 @@ public class Client {
     private IvParameterSpec iv;
     
     /** Reads data from the server. */
-    private  BufferedReader input;
+    private  DataInputStream input;
     
     /** Sends data to the server. */
     private  DataOutputStream output;
@@ -164,8 +164,7 @@ public class Client {
         System.out.println("Client is connected to the host.");
         
         try {
-            input = new BufferedReader(new InputStreamReader(
-                socket.getInputStream()));
+            input = new DataInputStream(socket.getInputStream());
         } catch (IOException e) {
             System.err.println("Couldn't create a reader for client "
                 + "socket.");
@@ -248,7 +247,7 @@ public class Client {
             byte[] broadcast = BROADCAST.getBytes("ISO-8859-1");
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = message.getBytes("ISO-8859-1");
-            msg = encrypt(msg, secretKey, iv);
+            msg = encrypt(msg);
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
             System.arraycopy(broadcast, 0, buffer, 0, 5);
@@ -319,29 +318,111 @@ public class Client {
      * @return a String containing the message sent
      *************************************************************************/
     public String receiveMessage() {
-        String message = "";
-        try {
-            System.out.println("Waiting for incoming message.");
-            message = input.readLine();
-            System.out.println("Received message: " + message);
-        } catch (IOException e) {
-            System.err.println("Could not get message from Server/other "
-                + "Client.");
-            e.printStackTrace();
-        }
-        String code = message.substring(0, message.indexOf(" "));
+        byte[] message = receiveBytes(input);
+        String[] parsedMessage = parseMessage(message);
+        // String message = "";
+        // try {
+        //     System.out.println("Waiting for incoming message.");
+        //     message = input.readLine();
+        //     System.out.println("Received message: " + message);
+        // } catch (IOException e) {
+        //     System.err.println("Could not get message from Server/other "
+        //         + "Client.");
+        //     e.printStackTrace();
+        // }
+        String code = parsedMessage[0];
+        String sender = parsedMessage[1].trim();
+        String size = parsedMessage[3].trim();
+        byte[] decoded = decode(message, size);
+        String messageStr = new String(decoded);
         if (code.equals(CLIENTLIST)) {
-            System.out.println("\"" + message + "\"");
-            processClientList(message.substring(message.indexOf(" ") + 1));
+            System.out.println("\"" + messageStr + "\"");
+            processClientList(messageStr);
             return "";
         } else if (code.equals(EXIT)) {
             return EXIT;
         } else if (code.equals(KICK)){
             alertExit();
         }
-        return message.substring(message.indexOf(" ") + 1);
+        return messageStr;
     }
     
+    /**********************************************************************
+     * Parses the first x bytes from a message obtained from the Client and
+     * returns the message parameters formatted as Strings. In parsing
+     * the bytes, the ISO-8859-1 charset is used because one byte matches
+     * to one character.
+     * @param buffer is the buffer of bytes from the Client
+     * @return an array of Strings comprised of:
+     * [0] the message Code (@send, @kick, etc)
+     * [1] optional parameter (destination/source)
+     * [2] optional parameter (source)
+     * [3] the size of the message, if there is one one
+     * [4] the encrypted message - most likely not going to be used
+     *********************************************************************/
+    public String[] parseMessage(byte[] buffer) {
+        String[] parsed = new String[5];
+        try {
+            parsed[0] = new String(buffer, 0, 5, "ISO-8859-1");
+            parsed[1] = new String(buffer, 5, 10, "ISO-8859-1").trim();
+            parsed[2] = new String(buffer, 15, 10, "ISO-8859-1").trim();
+            parsed[3] = new String(buffer, 25, 10, "ISO-8859-1");
+            parsed[4] = new String(buffer, 35, 1024, "ISO-8859-1");
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Encoding specified is unsupported.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+        for (String s: parsed) {
+            System.out.println(s);
+        }
+        return parsed;
+    }   
+    
+    /**********************************************************************
+     * Obtains the decoded message given a certain clientName and 
+     * ciphertext.
+     * @param clientName is the name of the sending Client.
+     * @param buffer contains the cipherText.
+     * @param sizeStr is a String containing the size of the message to be
+     * decoded
+     * @return a byte buffer containing the decoded text.
+     *********************************************************************/
+    private byte[] decode(byte[] buffer, String sizeStr) {
+        int size = 0;
+        try {
+            size = Integer.parseInt(sizeStr.trim());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        byte[] cipherText = new byte[size];
+        for (int i = 35; i < size + 35; ++i) {
+            cipherText[i - 35] = buffer[i];
+        }
+        byte[] decoded = decrypt(cipherText);
+        System.out.println("Decoded message: " + new String(decoded));
+        return decoded;
+    }
+        
+    /**********************************************************************
+     * Gets the byte form of the message sent from the client.
+     * @param input is the InputStream reading the data
+     * @return a byte array containing the message
+     *********************************************************************/
+    private static byte[] receiveBytes(InputStream input) {
+        byte[] buffer = new byte[1024 + 35];
+        try {
+            int n = input.read(buffer, 0, 1024 + 35);
+            System.out.println("Read " + n + " bytes from client.");
+        } catch (IOException e) {
+            System.err.println("Couldn't read bytes sent from the Client.");
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return buffer;
+    }
+        
     /************************************************************
      * Sends the symmetric key to the server after encrypting it
     ************************************************************/
@@ -426,8 +507,7 @@ public class Client {
      * cipher
      * @return a byte array containing the encrypted data
      *************************************************************************/
-    private static byte[] encrypt(byte[] plainText, SecretKey secretKey, 
-        IvParameterSpec iv) {
+    private byte[] encrypt(byte[] plainText) {
         try {
             Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
             c.init(Cipher.ENCRYPT_MODE, secretKey, iv);
@@ -478,8 +558,7 @@ public class Client {
      * cipher
      * @return a byte array containing the decrypted data
      *************************************************************************/
-    private static byte[] decrypt(byte[] cipherText, SecretKey secretKey, 
-        IvParameterSpec iv) {
+    private byte[] decrypt(byte[] cipherText) {
         try {
             Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
             c.init(Cipher.DECRYPT_MODE, secretKey, iv);

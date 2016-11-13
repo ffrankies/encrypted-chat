@@ -467,12 +467,25 @@ public class Server {
                 clientList += clients.nextElement() + ",";         
             }
             clientList = CLIENTLIST + " " + clientList;
-            
-            for (Enumeration<DataOutputStream> outputs = 
-                 clientOutputs.elements(); outputs.hasMoreElements(); ) {
-                DataOutputStream thisOutput = outputs.nextElement();
+            byte[] buffer = new byte[1024 + 35];
+            System.arraycopy(CLIENTLIST.getBytes(), 0, buffer, 0, 5);
+            for (Enumeration<String> clients = clientOutputs.keys(); 
+                 clients.hasMoreElements(); ) {
+                String client = clients.nextElement();
+                byte[] encoded = decrypt(clientList.getBytes(), 
+                    clientKeys.get(client), clientIVs.get(client));
+                byte[] size = new byte[10];
                 try {
-                    thisOutput.writeBytes(clientList + "\n");
+                    size = String.format("%10d", encoded.length).getBytes(
+                    "ISO-8859-1");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+                System.arraycopy(size, 0, buffer, 25, 10);
+                System.arraycopy(encoded, 0, buffer, 35, encoded.length);
+                try {
+                    clientOutputs.get(client).write(buffer);
                 } catch (IOException e) {
                     System.err.println("Could not send client list to client.");
                     e.printStackTrace();

@@ -18,6 +18,10 @@ public class Main {
         String clientName = "";
         try {
             clientName = userInput.readLine();
+            while ( clientName.length() > 10) {
+                System.out.println("Please enter a valid name");
+                clientName = userInput.readLine();
+            }
         } catch (IOException e) {
             System.err.println("Could not read from user input.");
             e.printStackTrace();
