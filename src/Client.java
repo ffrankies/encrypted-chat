@@ -12,11 +12,13 @@ import java.net.UnknownHostException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
 
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.*;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 
 import java.io.IOException;
 import java.io.BufferedReader;
@@ -96,8 +98,11 @@ public class Client {
     /** The exit code - tells the server that a client is disconnecting. */
     private static final String EXIT = "@exit";
     
-    /** The key code - lets the client know when the public key is received. */
+    /** The key code - lets the server know that message contains secret key. */
     private static final String KEY = "@key";
+    
+    /** The iv code - sends initialization vector to Server. */
+    private static final String IV = "@iv ";
     
     /** The public key sent to the client by the server */
     private PublicKey publicKey;
@@ -107,6 +112,9 @@ public class Client {
      * from the Server.
      */
     private SecretKey secretKey;
+    
+    /* The initialization vector used in message encryption/decryption. */
+    private IvParameterSpec iv;
     
     /** Reads data from the server. */
     private  BufferedReader input;
@@ -128,6 +136,12 @@ public class Client {
         setPublicKey("RSApub.der");
         secretKey = generateAESKey();
         
+        // Generate an initialization vector
+        SecureRandom r = new SecureRandom();
+    	byte ivbytes[] = new byte[16];
+    	r.nextBytes(ivbytes);
+    	iv = new IvParameterSpec(ivbytes);
+    	
         try {
             socket = new Socket(InetAddress.getByName(serverIP), port);
         } catch (UnknownHostException e) {
@@ -301,7 +315,7 @@ public class Client {
     /************************************************************
      * Sends the symmetric key to the server after encrypting it
     ************************************************************/
-    public void sendSymmetricKey(){
+    public void sendSymmetricKey() {
         byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
         String keyStr = new String(encryptedsecret);
         try {
@@ -312,9 +326,22 @@ public class Client {
         }
         /*
           TO-DO STILL
-          - Receive the key on the server side correctly in the logic
           - Start decrypting client messages on the server side with this key
         */
+    }
+    
+    /*************************************************************************
+     * Sends the initialization vector to the Server.
+     ************************************************************************/
+    private void sendInitializationVector() {
+    	String ivStr = new String(iv.getIV());
+    	try {
+    	    output.writeBytes(IV + ivStr + "\n");
+    	} catch (IOException e) {
+    	    System.err.println("Couldn't send initialization vector.");
+    	    e.printStackTrace();
+    	    System.exit(1);
+    	}
     }
     
     /*******************************************************

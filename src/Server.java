@@ -100,6 +100,9 @@ public class Server {
     /** The key code - tells the client they are receiving the public key. */
     private static final String KEY = "@key";
     
+    /** The iv code - sends initialization vector to Server. */
+    private static final String IV = "@iv";
+    
     /** The public key used for RSA encryption. */
     private static PublicKey publicKey;
     
@@ -119,6 +122,13 @@ public class Server {
      */
     private static ConcurrentHashMap<String,SecretKey> clientKeys = 
         new ConcurrentHashMap<String,SecretKey>();
+        
+    /**
+     * A map using client names as keys and Initialization Vectors as values. 
+     * Contains all the currently connected clients.
+     */
+    private static ConcurrentHashMap<String,IvParameterSpec> clientIVs = 
+        new ConcurrentHashMap<String,IvParameterSpec>();
     
     /**************************************************************************
      * Encrypts plaintext into ciphertext, given a provided secret key and 
@@ -499,11 +509,14 @@ public class Server {
             // Receive and decrypt the symmetric key from the Client
             SecretKey clientKey = getSecretKey(input);
             
+            IvParameterSpec iv = getIV(input);
+            
             System.out.println("Client " + clientName + " connected to the "
                 + "server.");
             
             clientOutputs.put(clientName, output);
             clientKeys.put(clientName, clientKey);
+            clientIVs.put(clientName, iv);
             
             sendClientList();
             
@@ -576,6 +589,23 @@ public class Server {
             return new SecretKeySpec(RSAdecrypt(encryptedSecret), "AES");
         }
         
+        /**********************************************************************
+         * Obtains the initialization vector for encryption/decryption from a 
+         * Client's message to the Server.
+         * @param input is the BufferedReader that reads data from the client
+         * @return the initialization vector as an IvParameterSpec object
+         *********************************************************************/
+        private static IvParameterSpec getIV(BufferedReader input) {
+            String ivStr = receiveMessage(input);
+            String code = ivStr.substring(0, ivStr.indexOf(" "));
+            if (!code.equals(IV)) {
+                System.err.println("Got something else instead of the IV.");
+                System.err.println(ivStr);
+                System.exit(1);
+            }
+            ivStr = ivStr.substring(ivStr.indexOf(" ") + 1);
+            return new IvParameterSpec(ivStr.getBytes());
+        }
         /**********************************************************************
          * Sends a message to all clients except the one that requested the 
          * broadcast.
