@@ -254,7 +254,7 @@ public class Client {
             System.arraycopy(broadcast, 0, buffer, 0, 5);
             System.arraycopy(sender, 0, buffer, 5, 10);
             System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, 1024);
+            System.arraycopy(msg, 0, buffer, 35, msg.length);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
