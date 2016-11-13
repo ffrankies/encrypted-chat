@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 import java.nio.channels.IllegalBlockingModeException;
 
@@ -585,7 +586,14 @@ public class Server {
             }
             clientKeyStr = clientKeyStr.substring(
                 clientKeyStr.indexOf(" ") + 1);
-            byte[] encryptedSecret = clientKeyStr.getBytes();
+            byte[] encryptedSecret = null;
+            try {
+                encryptedSecret = clientKeyStr.getBytes("UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                System.err.println("Unsupported Encoding supplied");
+                e.printStackTrace();
+                System.exit(1);
+            }
             return new SecretKeySpec(RSAdecrypt(encryptedSecret), "AES");
         }
         

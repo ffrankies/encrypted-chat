@@ -26,6 +26,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.UnsupportedEncodingException;
 
 /******************************************************************************
  * A Client in an encrypted chat program.
@@ -317,7 +318,13 @@ public class Client {
     ************************************************************/
     public void sendSymmetricKey() {
         byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
-        String keyStr = new String(encryptedsecret);
+        String keyStr = "";
+        try {
+            keyStr = new String(encryptedsecret, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.err.println("Unsupported Encoding supplied.");
+            e.printStackTrace();
+        }
         try {
             output.writeBytes(KEY + " " + keyStr + '\n');
         } catch (IOException e) {
