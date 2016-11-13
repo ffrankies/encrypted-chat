@@ -466,7 +466,6 @@ public class Server {
                  clients.hasMoreElements(); ) {
                 clientList += clients.nextElement() + ",";         
             }
-            clientList = CLIENTLIST + " " + clientList;
             byte[] buffer = new byte[1024 + 35];
             System.arraycopy(CLIENTLIST.getBytes(), 0, buffer, 0, 5);
             for (Enumeration<String> clients = clientOutputs.keys(); 
