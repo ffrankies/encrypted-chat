@@ -340,7 +340,7 @@ public class Client {
     /*************************************************************************
      * Sends the initialization vector to the Server.
      ************************************************************************/
-    private void sendInitializationVector() {
+    public void sendInitializationVector() {
     	String ivStr = new String(iv.getIV());
     	try {
     	    output.writeBytes(IV + ivStr + "\n");

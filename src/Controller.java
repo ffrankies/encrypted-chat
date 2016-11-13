@@ -84,6 +84,7 @@ public class Controller implements ActionListener {
         this.gui = gui;
         client.sendName();
         client.sendSymmetricKey();
+        client.sendInitializationVector();
         System.out.println("Client connected to server.");
         addButtonListeners();
         // Creates a thread that listens to messages from the Server.
