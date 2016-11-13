@@ -807,6 +807,9 @@ public class Server {
                 e.printStackTrace();
                 System.exit(1);
             }
+            for (String s: parsed) {
+                System.out.println(s);
+            }
             return parsed;
         }
         
