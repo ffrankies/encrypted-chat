@@ -214,13 +214,30 @@ public class Client {
          * Message format:
          * @send @DestionationName/ID @SenderName/ID message \n
          */
+        byte[] buffer = new byte[1024 + 35];
         try {
-            output.writeBytes(SEND + "@" + otherClient + " @" + name + " " + 
-                message + "\n");
-        } catch (IOException e) {
-            System.err.println("Could not send message to server.");
+            byte[] send = SEND.getBytes("ISO-8859-1");
+            byte[] receiver = otherClient.getBytes("ISO-8859-1");
+            byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
+            byte[] msg = message.getBytes("ISO-8859-1");
+            msg = encrypt(msg);
+            byte[] size = 
+                String.format("%10d", msg.length).getBytes("ISO-8859-1");
+            System.arraycopy(send, 0, buffer, 0, 5);
+            System.arraycopy(receiver, 0, buffer, 5, 10);
+            System.arraycopy(sender, 0, buffer, 15, 10);
+            System.arraycopy(size, 0, buffer, 25, 10);
+            System.arraycopy(msg, 0, buffer, 35, msg.length);
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            return;
+            System.exit(1);
+        }
+        try {
+            output.write(buffer, 0, 1024);
+        } catch (IOException e) {
+            System.err.println("Couldn't send encrypted message.");
+            e.printStackTrace();
+            System.exit(1);
         }
         
     }
@@ -235,13 +252,6 @@ public class Client {
          * Message format:
          * @broadcast @SenderName/ID message \n
          */
-        // try {
-        //     output.writeBytes(BROADCAST + "@" + name + " " + message + "\n");
-        // } catch (IOException e) {
-        //     System.err.println("Could not send message to server.");
-        //     e.printStackTrace();
-        //     return;
-        // }
         byte[] buffer = new byte[1024 + 35];
         try {
             byte[] broadcast = BROADCAST.getBytes("ISO-8859-1");
