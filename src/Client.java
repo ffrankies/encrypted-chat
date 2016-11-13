@@ -330,18 +330,8 @@ public class Client {
     public String receiveMessage() {
         byte[] message = receiveBytes(input);
         String[] parsedMessage = parseMessage(message);
-        // String message = "";
-        // try {
-        //     System.out.println("Waiting for incoming message.");
-        //     message = input.readLine();
-        //     System.out.println("Received message: " + message);
-        // } catch (IOException e) {
-        //     System.err.println("Could not get message from Server/other "
-        //         + "Client.");
-        //     e.printStackTrace();
-        // }
         String code = parsedMessage[0];
-        String sender = parsedMessage[1].trim();
+        String sender = parsedMessage[2].trim();
         String size = parsedMessage[3].trim();
         byte[] decoded = decode(message, size);
         String messageStr = new String(decoded);
@@ -354,7 +344,7 @@ public class Client {
         } else if (code.equals(KICK)){
             alertExit();
         }
-        return messageStr;
+        return sender.toUpperCase() + ": " + messageStr;
     }
     
     /**********************************************************************
