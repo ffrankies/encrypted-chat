@@ -49,7 +49,7 @@ public class Client {
      * - Have a GUI for all this to be done
      * - Should have a name
      * Part 2
-     * - Receive RSA public key from server at connection 
+     * - Load RSA public key from local file at connection 
      * - Send the server our generated symmetric key
      * - Decrypt the messages sent by the server
      * 
@@ -105,7 +105,7 @@ public class Client {
     /** The iv code - sends initialization vector to Server. */
     private static final String IV = "@iv ";
     
-    /** The public key sent to the client by the server */
+    /** The public key used to encrypt our symmetric key. */
     private PublicKey publicKey;
     
     /** 
