@@ -769,9 +769,9 @@ public class Server {
          * @return a byte array containing the message
          *********************************************************************/
         private static byte[] receiveBytes(InputStream input) {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[1024 + 35];
             try {
-                int n = input.read(buffer, 0, 1024);
+                int n = input.read(buffer, 0, 1024 + 35);
                 System.out.println("Read " + n + " bytes from client.");
             } catch (IOException e) {
                 System.err.println("Couldn't read bytes sent from the Client.");
@@ -801,7 +801,7 @@ public class Server {
                 parsed[1] = new String(buffer, 5, 10, "ISO-8859-1").trim();
                 parsed[2] = new String(buffer, 15, 10, "ISO-8859-1").trim();
                 parsed[3] = new String(buffer, 25, 10, "ISO-8859-1");
-                parsed[4] = new String(buffer, 35, 1024 - 35, "ISO-8859-1");
+                parsed[4] = new String(buffer, 35, 1024, "ISO-8859-1");
             } catch (UnsupportedEncodingException e) {
                 System.err.println("Encoding specified is unsupported.");
                 e.printStackTrace();

@@ -243,7 +243,7 @@ public class Client {
         //     e.printStackTrace();
         //     return;
         // }
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[1024 + 35];
         try {
             byte[] broadcast = BROADCAST.getBytes("ISO-8859-1");
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
@@ -254,7 +254,7 @@ public class Client {
             System.arraycopy(broadcast, 0, buffer, 0, 5);
             System.arraycopy(sender, 0, buffer, 5, 10);
             System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, msg.length);
+            System.arraycopy(msg, 0, buffer, 35, 1024);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
