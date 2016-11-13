@@ -590,7 +590,7 @@ public class Server {
             System.out.println("Secret key:" + clientKeyStr);
             byte[] encryptedSecret = null;
             try {
-                encryptedSecret = clientKeyStr.getBytes("UTF-8");
+                encryptedSecret = clientKeyStr.getBytes("ISO-8859-1");
             } catch (UnsupportedEncodingException e) {
                 System.err.println("Unsupported Encoding supplied");
                 e.printStackTrace();

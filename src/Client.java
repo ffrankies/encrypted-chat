@@ -320,7 +320,7 @@ public class Client {
         byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
         String keyStr = "";
         try {
-            keyStr = new String(encryptedsecret, "UTF-8");
+            keyStr = new String(encryptedsecret, "ISO-8859-1");
         } catch (UnsupportedEncodingException e) {
             System.err.println("Unsupported Encoding supplied.");
             e.printStackTrace();
