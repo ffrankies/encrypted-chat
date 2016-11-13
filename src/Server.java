@@ -669,6 +669,20 @@ public class Server {
                     destination);
                 e.printStackTrace();
             }
+            // Alternative way to send the message with cleaner code
+            // Not sure it would work, but it would be worth a try
+            // String[] messageStr = message.split(" ");
+            // destination = messageStr[1];
+            // message = SEND + " " + messageStr[2] + "\n";
+            // DataOutputStream thisOutput = 
+            //     clientOutputs.get(destination.substring(1));
+            // try {
+            //     thisOutput.writeBytes(message);
+            // } catch (IOException e) {
+            //     System.err.println("Could not send data to " + 
+            //         destination);
+            //     e.printStackTrace();
+            // }
         }
         
         /**********************************************************************
