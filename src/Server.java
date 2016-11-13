@@ -471,12 +471,12 @@ public class Server {
             for (Enumeration<String> clients = clientOutputs.keys(); 
                  clients.hasMoreElements(); ) {
                 String client = clients.nextElement();
-                byte[] encoded = decrypt(clientList.getBytes(), 
+                byte[] encoded = encrypt(clientList.getBytes(), 
                     clientKeys.get(client), clientIVs.get(client));
                 byte[] size = new byte[10];
                 try {
                     size = String.format("%10d", encoded.length).getBytes(
-                    "ISO-8859-1");
+                        "ISO-8859-1");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                     System.exit(1);
