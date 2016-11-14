@@ -556,7 +556,7 @@ public class Server {
             }
             
             while (true) {
-                byte[] message = receiveBytes(secretInput);
+                byte[] message = receiveBytes(secretInput, clientName);
                 String[] parsedMessage = parseMessage(message);
                 String command = parsedMessage[0];
                 String receiver = parsedMessage[1].trim();
@@ -809,9 +809,12 @@ public class Server {
                 System.err.println("Couldn't close client socket.");
                 e.printStackTrace();
             }
-            clientOutputs.remove(sender);
-            clientKeys.remove(sender);
-            clientIVs.remove(sender);
+            if (null == clientOutputs.remove(sender))
+                System.err.println(sender + "'s output not removed.");
+            if (null == clientKeys.remove(sender))
+                System.err.println(sender + "'s key not removed.");
+            if (null == clientIVs.remove(sender))
+                System.err.println(sender + "'s iv not removed.");
             sendClientList();
         }
         
@@ -820,13 +823,13 @@ public class Server {
          * @param input is the InputStream reading the data
          * @return a byte array containing the message
          *********************************************************************/
-        private static byte[] receiveBytes(InputStream input) {
+        private static byte[] receiveBytes(InputStream input, String client) {
             byte[] buffer = new byte[1024 + 35];
             try {
                 int n = input.read(buffer, 0, 1024 + 35);
                 System.out.println("Read " + n + " bytes from client.");
             } catch (IOException e) {
-                System.err.println("Couldn't read bytes sent from the Client.");
+                System.err.println("Couldn't read bytes sent from: " + client);
                 e.printStackTrace();
                 System.exit(1);
             }
