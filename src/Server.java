@@ -771,7 +771,7 @@ public class Server {
                 String client = clients.nextElement(); 
                 byte[] decoded = new byte[1024];
                 try {
-                    decoded = client.getBytes("ISO-8859-1");
+                    decoded = msg.getBytes("ISO-8859-1");
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                     System.exit(1);

@@ -331,6 +331,7 @@ public class Client {
      * Alerts the server that this Client is disconnecting.
      *************************************************************************/
     public void alertExit() {
+        
         /*
          * Message format:
          * @exit (5 bytes)
@@ -472,11 +473,10 @@ public class Client {
         byte[] buffer = new byte[1024 + 35];
         try {
             int n = input.read(buffer, 0, 1024 + 35);
-            System.out.println("Read " + n + " bytes from client.");
+            System.out.println("Read " + n + " bytes from Server.");
         } catch (IOException e) {
-            System.err.println("Couldn't read bytes sent from the Client.");
+            System.err.println("Couldn't read bytes sent from the Server.");
             e.printStackTrace();
-            System.exit(1);
         }
         return buffer;
     }
