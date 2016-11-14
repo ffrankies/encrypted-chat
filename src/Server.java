@@ -570,7 +570,6 @@ public class Server {
                     send(message, sender, receiver, size);
                 } else if (command.equals(KICK)) {
                     kick(message, sender, size);
-                    clientSocket.close();
                 } else if (command.equals(EXIT)) {
                     exit(message, sender);
                     // Completes while loop and ends this thread
