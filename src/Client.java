@@ -477,8 +477,10 @@ public class Client {
         byte[] buffer = new byte[1024 + 35];
         try {
             int n = input.read(buffer, 0, 1024 + 35);
-            if (n == -1)
-                return null;
+            if (n == -1) {
+                System.err.println("Couldn't read bytes from Server.");
+                System.exit(1);
+            }
             System.out.println("Read " + n + " bytes from Server.");
         } catch (IOException e) {
             System.err.println("Couldn't read bytes sent from the Server.");
