@@ -730,7 +730,7 @@ public class Server {
             String msg = "";
             try {
                 msg = new String(decoded, "ISO-8859-1");
-                
+                System.out.println("Kicking message for clients: " + msg);
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 System.exit(1);
