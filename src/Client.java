@@ -386,6 +386,8 @@ public class Client {
     public String receiveMessage() {
         byte[] message = receiveBytes(input);
         String[] parsedMessage = parseMessage(message);
+        if (parsedMessage == null)
+            return "";
         String code = parsedMessage[0];
         String sender = parsedMessage[2].trim();
         String size = parsedMessage[3].trim();
@@ -418,6 +420,8 @@ public class Client {
      * [4] the encrypted message - most likely not going to be used
      *********************************************************************/
     public String[] parseMessage(byte[] buffer) {
+        if (buffer == null)
+            return null;
         String[] parsed = new String[5];
         try {
             parsed[0] = new String(buffer, 0, 5, "ISO-8859-1");
