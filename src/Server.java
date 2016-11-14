@@ -570,6 +570,7 @@ public class Server {
                     send(message, sender, receiver, size);
                 } else if (command.equals(KICK)) {
                     kick(message, sender, size);
+                    clientSocket.close();
                 } else if (command.equals(EXIT)) {
                     exit(message, sender);
                     // Completes while loop and ends this thread
@@ -730,6 +731,7 @@ public class Server {
             String msg = "";
             try {
                 msg = new String(decoded, "ISO-8859-1");
+                
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
                 System.exit(1);
