@@ -474,6 +474,8 @@ public class Client {
         try {
             int n = input.read(buffer, 0, 1024 + 35);
             System.out.println("Read " + n + " bytes from Server.");
+            if (n == -1)
+                return null;
         } catch (IOException e) {
             System.err.println("Couldn't read bytes sent from the Server.");
             e.printStackTrace();
@@ -486,23 +488,12 @@ public class Client {
     ************************************************************/
     public void sendSymmetricKey() {
         byte encryptedsecret[] = RSAEncrypt(secretKey.getEncoded());
-        // String keyStr = "";
-        // try {
-        //     keyStr = new String(encryptedsecret, "ISO-8859-1");
-        // } catch (UnsupportedEncodingException e) {
-        //     System.err.println("Unsupported Encoding supplied.");
-        //     e.printStackTrace();
-        // }
         try {
             output.write(encryptedsecret, 0, 256);
         } catch (IOException e) {
             System.err.println("Couldn't send symmetric key to server.");
             e.printStackTrace();
         }
-        /*
-          TO-DO STILL
-          - Start decrypting client messages on the server side with this key
-        */
     }
     
     /*************************************************************************

@@ -578,6 +578,15 @@ public class Server {
                 
             }  // while loop 
             
+            clientOutputs.remove(clientName);
+            clientKeys.remove(clientName);
+            clientIVs.remove(clientName);
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                System.err.println("Couldn't close client socket.");
+                e.printStackTrace();
+            }
             System.out.println("Client has exited gracefully: " + clientName);
         }
             
@@ -803,19 +812,19 @@ public class Server {
                 }
             }
             // Close client socket, remove client from maps
-            try {
-                clientSocket.close();
-            } catch (IOException e) {
-                System.err.println("Couldn't close client socket.");
-                e.printStackTrace();
-            }
-            if (null == clientOutputs.remove(sender))
-                System.err.println(sender + "'s output not removed.");
-            if (null == clientKeys.remove(sender))
-                System.err.println(sender + "'s key not removed.");
-            if (null == clientIVs.remove(sender))
-                System.err.println(sender + "'s iv not removed.");
-            sendClientList();
+            // try {
+            //     clientSocket.close();
+            // } catch (IOException e) {
+            //     System.err.println("Couldn't close client socket.");
+            //     e.printStackTrace();
+            // }
+            // if (null == clientOutputs.remove(sender))
+            //     System.err.println(sender + "'s output not removed.");
+            // if (null == clientKeys.remove(sender))
+            //     System.err.println(sender + "'s key not removed.");
+            // if (null == clientIVs.remove(sender))
+            //     System.err.println(sender + "'s iv not removed.");
+            // sendClientList();
         }
         
         /**********************************************************************
