@@ -486,7 +486,8 @@ public class Server {
                 try {
                     clientOutputs.get(client).write(buffer);
                 } catch (IOException e) {
-                    System.err.println("Could not send client list to client.");
+                    System.err.println("Could not send client list to: " + 
+                        client);
                     e.printStackTrace();
                 } 
             }
