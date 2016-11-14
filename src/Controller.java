@@ -168,7 +168,7 @@ public class Controller implements ActionListener {
         } else if (e.getSource() instanceof JButton && e.getSource() == exit) {
             
             client.alertExit();
-            client.closeConnection();
+            //client.closeConnection();
             // System.out.println("Reached the system.exit line.");
             // System.exit(0);
             
