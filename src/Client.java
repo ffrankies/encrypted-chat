@@ -447,6 +447,7 @@ public class Client {
      *********************************************************************/
     private byte[] decode(byte[] buffer, String sizeStr) {
         int size = 0;
+        System.out.println("size of the message to decode: " + sizeStr);
         try {
             size = Integer.parseInt(sizeStr.trim());
         } catch (NumberFormatException e) {
