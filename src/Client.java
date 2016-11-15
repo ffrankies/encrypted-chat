@@ -176,6 +176,7 @@ public class Client {
     
     /**************************************************************************
      * Generates an initialization vector for message encryption.
+     * @return an initialization vector
      *************************************************************************/
     private IvParameterSpec generateIV() {
         // Generate an initialization vector
@@ -184,6 +185,7 @@ public class Client {
     	r.nextBytes(ivbytes);
     	return new IvParameterSpec(ivbytes);
     }
+    
     /**************************************************************************
      * Reads the server's public key. Used for decrypting the secret key
      * @param filename is the local file containing the public key
@@ -486,9 +488,9 @@ public class Client {
      * @return a byte array containing the message
      *********************************************************************/
     private static byte[] receiveBytes(InputStream input) {
-        byte[] buffer = new byte[1024 + 35];
+        byte[] buffer = new byte[1024 + 51];
         try {
-            int n = input.read(buffer, 0, 1024 + 35);
+            int n = input.read(buffer, 0, 1024 + 51);
             if (n == -1) {
                 System.err.println("Couldn't read bytes from Server.");
                 System.exit(1);
