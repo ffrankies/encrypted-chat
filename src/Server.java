@@ -590,6 +590,7 @@ public class Server {
             try {
                 secretInput.close();
                 input.close();
+                clientSocket.close();
             } catch (IOException e) {
                 System.err.println("Couldn't close input streams.");
                 e.printStackTrace();

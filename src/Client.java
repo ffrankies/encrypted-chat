@@ -120,9 +120,6 @@ public class Client {
      */
     private SecretKey secretKey;
     
-    /* The initialization vector used in message encryption/decryption. */
-    private IvParameterSpec iv;
-    
     /** Reads data from the server. */
     private  DataInputStream input;
     
@@ -142,12 +139,6 @@ public class Client {
         this.serverIP = serverIP;
         setPublicKey("RSApub.der");
         secretKey = generateAESKey();
-        
-        // Generate an initialization vector
-        SecureRandom r = new SecureRandom();
-    	byte ivbytes[] = new byte[16];
-    	r.nextBytes(ivbytes);
-    	iv = new IvParameterSpec(ivbytes);
     	
         try {
             socket = new Socket(InetAddress.getByName(serverIP), port);
@@ -182,7 +173,17 @@ public class Client {
         }
         
     }
-        
+    
+    /**************************************************************************
+     * Generates an initialization vector for message encryption.
+     *************************************************************************/
+    private IvParameterSpec generateIV() {
+        // Generate an initialization vector
+        SecureRandom r = new SecureRandom();
+    	byte ivbytes[] = new byte[16];
+    	r.nextBytes(ivbytes);
+    	return new IvParameterSpec(ivbytes);
+    }
     /**************************************************************************
      * Reads the server's public key. Used for decrypting the secret key
      * @param filename is the local file containing the public key
@@ -213,26 +214,29 @@ public class Client {
         /*
          * Message format:
          * @send (5 bytes)
+         * iv (16 bytes)
          * receiverName (10 bytes)
          * SenderName (10 bytes)
          * size (10 bytes)
          * message (1024 bytes)
          */
-        byte[] buffer = new byte[1024 + 35];
+        byte[] buffer = new byte[1024 + 51];
         try {
             byte[] send = SEND.getBytes("ISO-8859-1");
+            byte[] iv = generateIV().getIV();
             byte[] receiver = Arrays.copyOf(
                 otherClient.getBytes("ISO-8859-1"), 10);
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = message.getBytes("ISO-8859-1");
-            msg = encrypt(msg);
+            msg = encrypt(msg, iv);
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
             System.arraycopy(send, 0, buffer, 0, 5);
-            System.arraycopy(receiver, 0, buffer, 5, 10);
-            System.arraycopy(sender, 0, buffer, 15, 10);
-            System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, msg.length);
+            System.arraycopy(iv, 0, buffer, 5, 16);
+            System.arraycopy(receiver, 0, buffer, 21, 10);
+            System.arraycopy(sender, 0, buffer, 31, 10);
+            System.arraycopy(size, 0, buffer, 41, 10);
+            System.arraycopy(msg, 0, buffer, 51, msg.length);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
@@ -261,24 +265,26 @@ public class Client {
          * size (10 bytes)
          * message (1024 bytes)
          */
-        byte[] buffer = new byte[1024 + 35];
+        byte[] buffer = new byte[1024 + 51];
         try {
             byte[] broadcast = BROADCAST.getBytes("ISO-8859-1");
+            byte[] iv = generateIV().getIV();
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = message.getBytes("ISO-8859-1");
-            msg = encrypt(msg);
+            msg = encrypt(msg, iv);
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
             System.arraycopy(broadcast, 0, buffer, 0, 5);
-            System.arraycopy(sender, 0, buffer, 15, 10);
-            System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, msg.length);
+            System.arraycopy(iv, 0, buffer, 5, 16);
+            System.arraycopy(sender, 0, buffer, 31, 10);
+            System.arraycopy(size, 0, buffer, 41, 10);
+            System.arraycopy(msg, 0, buffer, 51, msg.length);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024 + 35);
+            output.write(buffer, 0, 1024 + 51);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -301,24 +307,26 @@ public class Client {
          * size (10 bytes)
          * users (1024 bytes)
          */
-        byte[] buffer = new byte[1024 + 35];
+        byte[] buffer = new byte[1024 + 51];
         try {
-            byte[] broadcast = KICK.getBytes("ISO-8859-1");
+            byte[] kick = KICK.getBytes("ISO-8859-1");
+            byte[] iv = generateIV().getIV();
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = users.getBytes("ISO-8859-1");
-            msg = encrypt(msg);
+            msg = encrypt(msg, iv);
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
-            System.arraycopy(broadcast, 0, buffer, 0, 5);
-            System.arraycopy(sender, 0, buffer, 15, 10);
-            System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, msg.length);
+            System.arraycopy(kick, 0, buffer, 0, 5);
+            System.arraycopy(iv, 0, buffer, 5, 16);
+            System.arraycopy(sender, 0, buffer, 31, 10);
+            System.arraycopy(size, 0, buffer, 41, 10);
+            System.arraycopy(msg, 0, buffer, 51, msg.length);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024 + 35);
+            output.write(buffer, 0, 1024 + 51);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -340,24 +348,26 @@ public class Client {
          * size (10 bytes)
          * users (1024 bytes)
          */
-        byte[] buffer = new byte[1024 + 35];
+        byte[] buffer = new byte[1024 + 51];
         try {
             byte[] exit = EXIT.getBytes("ISO-8859-1");
+            byte[] iv = generateIV().getIV();
             byte[] sender = Arrays.copyOf(name.getBytes("ISO-8859-1"), 10);
             byte[] msg = "Nothing To See Here".getBytes("ISO-8859-1");
-            msg = encrypt(msg);
+            msg = encrypt(msg, iv);
             byte[] size = 
                 String.format("%10d", msg.length).getBytes("ISO-8859-1");
             System.arraycopy(exit, 0, buffer, 0, 5);
-            System.arraycopy(sender, 0, buffer, 15, 10);
-            System.arraycopy(size, 0, buffer, 25, 10);
-            System.arraycopy(msg, 0, buffer, 35, msg.length);
+            System.arraycopy(iv, 0, buffer, 5, 16);
+            System.arraycopy(sender, 0, buffer, 31, 10);
+            System.arraycopy(size, 0, buffer, 41, 10);
+            System.arraycopy(msg, 0, buffer, 51, msg.length);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024 + 35);
+            output.write(buffer, 0, 1024 + 51);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -459,11 +469,13 @@ public class Client {
             e.printStackTrace();
             System.exit(1);
         }
+        byte[] iv = new byte[16];
+        System.arraycopy(buffer, 5, iv, 0, 16);
         byte[] cipherText = new byte[size];
-        for (int i = 35; i < size + 35; ++i) {
-            cipherText[i - 35] = buffer[i];
+        for (int i = 51; i < size + 51; ++i) {
+            cipherText[i - 51] = buffer[i];
         }
-        byte[] decoded = decrypt(cipherText);
+        byte[] decoded = decrypt(cipherText, iv);
         System.out.println("Decoded message: " + new String(decoded));
         return decoded;
     }
@@ -505,17 +517,17 @@ public class Client {
     /*************************************************************************
      * Sends the initialization vector to the Server.
      ************************************************************************/
-    public void sendInitializationVector() {
-    	String ivStr = new String(iv.getIV());
-    	try {
-    	    output.write(iv.getIV(), 0, iv.getIV().length);
-    	    System.out.println(iv.getIV().length + " length of IV.");
-    	} catch (IOException e) {
-    	    System.err.println("Couldn't send initialization vector.");
-    	    e.printStackTrace();
-    	    System.exit(1);
-    	}
-    }
+    // public void sendInitializationVector() {
+    // 	String ivStr = new String(iv.getIV());
+    // 	try {
+    // 	    output.write(iv.getIV(), 0, iv.getIV().length);
+    // 	    System.out.println(iv.getIV().length + " length of IV.");
+    // 	} catch (IOException e) {
+    // 	    System.err.println("Couldn't send initialization vector.");
+    // 	    e.printStackTrace();
+    // 	    System.exit(1);
+    // 	}
+    // }
     
     /*******************************************************
      * Generate a symmetric to share with the server
@@ -553,7 +565,8 @@ public class Client {
             return null;
         }
     }
-        /**************************************************************************
+    
+    /**************************************************************************
      * Encrypts plaintext into ciphertext, given a provided secret key and 
      * IvParameterSpec.
      * @param plainText is the plaintext to be encrypted
@@ -562,10 +575,10 @@ public class Client {
      * cipher
      * @return a byte array containing the encrypted data
      *************************************************************************/
-    private byte[] encrypt(byte[] plainText) {
+    private byte[] encrypt(byte[] plainText, byte[] iv) {
         try {
             Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            c.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+            c.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
             byte[] cipherText = c.doFinal(plainText);
             return cipherText;
         } catch (NoSuchAlgorithmException e) {
@@ -613,10 +626,10 @@ public class Client {
      * cipher
      * @return a byte array containing the decrypted data
      *************************************************************************/
-    private byte[] decrypt(byte[] cipherText) {
+    private byte[] decrypt(byte[] cipherText, byte[] iv) {
         try {
             Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            c.init(Cipher.DECRYPT_MODE, secretKey, iv);
+            c.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
             byte[] plainText = c.doFinal(cipherText);
             return plainText;
         } catch (NoSuchAlgorithmException e) {

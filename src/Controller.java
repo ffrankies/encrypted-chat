@@ -83,7 +83,7 @@ public class Controller implements ActionListener {
         this.client = client;
         this.gui = gui;
         client.sendSymmetricKey();
-        client.sendInitializationVector();
+        //client.sendInitializationVector();
         client.sendName();
         System.out.println("Client connected to server.");
         addButtonListeners();
