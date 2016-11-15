@@ -91,6 +91,13 @@ public class ClientGUI extends JFrame {
         }
     }
     
+    /********************************************************************
+     * Displays the explanations for the admin commands to the client GUI
+     * *****************************************************************/
+     public void displayHelp() {
+         incoming.displayHelp();
+     }
+    
     /**************************************************************************
      * Updates the Client list in the clientList panel with the new list of 
      * other Clients.

@@ -182,7 +182,7 @@ public class Controller implements ActionListener {
             namesToKick = namesToKick.substring(0, namesToKick.length());
             client.sendKick(namesToKick);
         } else if (e.getSource() instanceof JButton && e.getSource() == help) {
-            
+            gui.displayHelp();
         }
     }
     
