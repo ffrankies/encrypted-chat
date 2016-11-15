@@ -797,6 +797,8 @@ public class Server {
                 clients.hasMoreElements(); ) {
                 String client = clients.nextElement(); 
                 if (!sender.equals(client)) {
+                    System.out.println("Alerting " + client + " about " + sender 
+                        + "'s exit.");
                     //Encode the data
                     byte[] encoded = encrypt(decoded, clientKeys.get(client), 
                         clientIVs.get(client));
@@ -817,16 +819,18 @@ public class Server {
                         e.printStackTrace();
                         System.exit(1);
                     }
+                    System.out.println("Done alerting " + client + " about " 
+                        + sender + "'s exit.");
                 }
             }
             //Close client socket, remove client from maps
             System.out.println("Closing socket of " + sender);
-            try {
-                socket.close();
-            } catch (IOException e) {
-                System.err.println("Couldn't close client socket.");
-                e.printStackTrace();
-            }
+            // try {
+            //     socket.close();
+            // } catch (IOException e) {
+            //     System.err.println("Couldn't close client socket.");
+            //     e.printStackTrace();
+            // }
             if (null == clientOutputs.remove(sender))
                 System.err.println(sender + "'s output not removed.");
             if (null == clientKeys.remove(sender))
