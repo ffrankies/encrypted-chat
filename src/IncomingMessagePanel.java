@@ -58,16 +58,19 @@ public class IncomingMessagePanel extends JPanel {
     
     public void displayHelp(){
         JLabel send, kick, exit, broadcast;
-        send = new JLabel("Send - use to send messages to specific" + 
+        send = new JLabel("Send - send messages to specific clients");
+        kick = new JLabel("Kick - kick unlikable users off the chat");
+        exit = new JLabel("Exit - notify the server before exiting");
+        broadcast = new JLabel("Broadcast - broadcast messages to all " +
         "clients");
-        kick = new JLabel("Kick - use to kick unlikable users off the chat");
-        exit = new JLabel("Exit - use to notify the server before exiting");
-        broadcast = new JLabel("Broadcast - use to broadcast messages to all" +
-        "clients in the chat");
         myTextArea.add(send);
+        send.setSize(myTextArea.getWidth(), send.getHeight());
         myTextArea.add(kick);
+        kick.setSize(myTextArea.getWidth(), kick.getHeight());
         myTextArea.add(exit);
+        exit.setSize(myTextArea.getWidth(), exit.getHeight());
         myTextArea.add(broadcast);
+        broadcast.setSize(myTextArea.getWidth(), broadcast.getHeight());
         myTextArea.revalidate();
         myTextArea.repaint();
         revalidate();
