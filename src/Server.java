@@ -479,7 +479,7 @@ public class Server {
                  clients.hasMoreElements(); ) {
                 clientList += clients.nextElement() + ",";         
             }
-            byte[] buffer = new byte[1024 + 35];
+            byte[] buffer = new byte[1024 + 51];
             System.arraycopy(CLIENTLIST.getBytes(), 0, buffer, 0, 5);
             for (Enumeration<String> clients = clientOutputs.keys(); 
                  clients.hasMoreElements(); ) {
@@ -494,8 +494,8 @@ public class Server {
                     e.printStackTrace();
                     System.exit(1);
                 }
-                System.arraycopy(size, 0, buffer, 25, 10);
-                System.arraycopy(encoded, 0, buffer, 35, encoded.length);
+                System.arraycopy(size, 0, buffer, 41, 10);
+                System.arraycopy(encoded, 0, buffer, 51, encoded.length);
                 try {
                     clientOutputs.get(client).write(buffer);
                 } catch (IOException e) {
