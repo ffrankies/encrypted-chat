@@ -484,8 +484,9 @@ public class Server {
             for (Enumeration<String> clients = clientOutputs.keys(); 
                  clients.hasMoreElements(); ) {
                 String client = clients.nextElement();
+                byte[] iv = generateIV().getIV();
                 byte[] encoded = encrypt(clientList.getBytes(), 
-                    clientKeys.get(client), clientIVs.get(client));
+                    clientKeys.get(client), new IvParameterSpec(iv));
                 byte[] size = new byte[10];
                 try {
                     size = String.format("%10d", encoded.length).getBytes(
@@ -494,6 +495,7 @@ public class Server {
                     e.printStackTrace();
                     System.exit(1);
                 }
+                System.arraycopy(iv, 0, buffer, 5, 16);
                 System.arraycopy(size, 0, buffer, 41, 10);
                 System.arraycopy(encoded, 0, buffer, 51, encoded.length);
                 try {
