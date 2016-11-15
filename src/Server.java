@@ -525,7 +525,7 @@ public class Server {
             // Receive and decrypt the symmetric key from the Client
             SecretKey clientKey = getSecretKey(secretInput);
             
-            IvParameterSpec iv = getIV(secretInput);
+            //IvParameterSpec iv = getIV(secretInput);
             
             BufferedReader input = null;
             try {
@@ -555,7 +555,7 @@ public class Server {
             
             clientOutputs.put(clientName, output);
             clientKeys.put(clientName, clientKey);
-            clientIVs.put(clientName, iv);
+            //clientIVs.put(clientName, iv);
             
             sendClientList();
             
@@ -856,8 +856,8 @@ public class Server {
                 System.err.println(sender + "'s output not removed.");
             if (null == clientKeys.remove(sender))
                 System.err.println(sender + "'s key not removed.");
-            if (null == clientIVs.remove(sender))
-                System.err.println(sender + "'s iv not removed.");
+            //if (null == clientIVs.remove(sender))
+            //    System.err.println(sender + "'s iv not removed.");
             sendClientList();
         }
         
