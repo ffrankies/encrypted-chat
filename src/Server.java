@@ -34,6 +34,7 @@ import java.security.PublicKey;
 import java.security.PrivateKey;
 import java.security.KeyFactory;
 import java.security.spec.*;
+import java.security.SecureRandom;
 
 // import java.lang.IllegalStateException;
 
@@ -132,6 +133,18 @@ public class Server {
      */
     private static ConcurrentHashMap<String,IvParameterSpec> clientIVs = 
         new ConcurrentHashMap<String,IvParameterSpec>();
+    
+    /**************************************************************************
+     * Generates an initialization vector for message encryption.
+     * @return an initialization vector
+     *************************************************************************/
+    private static IvParameterSpec generateIV() {
+        // Generate an initialization vector
+        SecureRandom r = new SecureRandom();
+    	byte ivbytes[] = new byte[16];
+    	r.nextBytes(ivbytes);
+    	return new IvParameterSpec(ivbytes);
+    }
     
     /**************************************************************************
      * Encrypts plaintext into ciphertext, given a provided secret key and 
@@ -590,7 +603,6 @@ public class Server {
             try {
                 secretInput.close();
                 input.close();
-                clientSocket.close();
             } catch (IOException e) {
                 System.err.println("Couldn't close input streams.");
                 e.printStackTrace();
@@ -664,20 +676,22 @@ public class Server {
                 String clientName = clients.nextElement();
                 if (!sender.equals(clientName)) {
                     //Encode the data
+                    byte[] iv = generateIV().getIV();
                     byte[] encoded = encrypt(decoded, 
-                        clientKeys.get(clientName), clientIVs.get(clientName));
+                        clientKeys.get(clientName), new IvParameterSpec(iv));
                     String size = String.format("%10d", encoded.length);
                     try {
+                        System.arraycopy(iv, 0, message, 5, 16);
                         System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
-                            message, 25, 10);
+                            message, 41, 10);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                         System.exit(1);
                     }
-                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    System.arraycopy(encoded, 0, message, 51, encoded.length);
                     try {
                         clientOutputs.get(clientName).write(
-                            message, 0, 1024 + 35);
+                            message, 0, 1024 + 51);
                     } catch (IOException e) {
                         System.err.println("Couldn't send broadcast message.");
                         e.printStackTrace();
@@ -702,20 +716,22 @@ public class Server {
                 clients.hasMoreElements(); ) {
                 String client = clients.nextElement();
                 if (client.equals(receiver)) {
+                    byte[] iv = generateIV().getIV();
                     byte[] encoded = encrypt(decoded, clientKeys.get(client), 
-                        clientIVs.get(client));
+                        new IvParameterSpec(iv));
                     String size = String.format("%10d", encoded.length);
                     try {
+                        System.arraycopy(iv, 0, message, 5, 16);
                         System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
-                            message, 25, 10);
+                            message, 41, 10);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                         System.exit(1);
                     }
-                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    System.arraycopy(encoded, 0, message, 51, encoded.length);
                     try {
                         clientOutputs.get(client).write(
-                            message, 0, 1024 + 35);
+                            message, 0, 1024 + 51);
                     } catch (IOException e) {
                         System.err.println("Couldn't send broadcast message.");
                         e.printStackTrace();
@@ -746,20 +762,22 @@ public class Server {
             String[] clients = msg.split(",");
             for(int i = 0; i < clients.length; ++i){
                 System.out.println("Trying to kick: " + clients[i]);
+                byte[] iv = generateIV().getIV();
                 byte[] encoded = encrypt(decoded, clientKeys.get(clients[i]), 
-                    clientIVs.get(clients[i]));
+                    new IvParameterSpec(iv));
                 String size = String.format("%10d", encoded.length);
                 try {
+                    System.arraycopy(iv, 0, message, 5, 16);
                     System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
-                        message, 25, 10);
+                        message, 41, 10);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                     System.exit(1);
                 }
-                System.arraycopy(encoded, 0, message, 35, encoded.length);
+                System.arraycopy(encoded, 0, message, 51, encoded.length);
                 try {
                     clientOutputs.get(clients[i]).write(
-                        message, 0, 1024 + 35);
+                        message, 0, 1024 + 51);
                 } catch (IOException e) {
                     System.err.println("Couldn't send broadcast message.");
                     e.printStackTrace();
@@ -777,7 +795,7 @@ public class Server {
         private static void exit(byte[] message, String sender, Socket socket) {
             // Confirm to Client that it can disconnect
             try {
-                clientOutputs.get(sender).write(message, 0, 1024 + 35);
+                clientOutputs.get(sender).write(message, 0, 1024 + 51);
             } catch (IOException e) {
                 System.err.println("Could not send exit notice back"
                     + " to client.");
@@ -801,12 +819,14 @@ public class Server {
                     System.out.println("Alerting " + client + " about " + sender 
                         + "'s exit.");
                     //Encode the data
+                    byte[] iv = generateIV().getIV();
                     byte[] encoded = encrypt(decoded, clientKeys.get(client), 
-                        clientIVs.get(client));
+                        new IvParameterSpec(iv));
                     String size = String.format("%10d", encoded.length);
                     try {
+                        System.arraycopy(iv, 0, message, 5, 16);
                         System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
-                            message, 25, 10);
+                            message, 41, 10);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                         System.exit(1);
@@ -814,7 +834,7 @@ public class Server {
                     System.arraycopy(encoded, 0, message, 35, encoded.length);
                     try {
                         clientOutputs.get(client).write(
-                            message, 0, 1024 + 35);
+                            message, 0, 1024 + 51);
                     } catch (IOException e) {
                         System.err.println("Couldn't send exit notice.");
                         e.printStackTrace();
@@ -847,9 +867,9 @@ public class Server {
          * @return a byte array containing the message
          *********************************************************************/
         private static byte[] receiveBytes(InputStream input, String client) {
-            byte[] buffer = new byte[1024 + 35];
+            byte[] buffer = new byte[1024 + 51];
             try {
-                int n = input.read(buffer, 0, 1024 + 35);
+                int n = input.read(buffer, 0, 1024 + 51);
                 System.out.println("Read " + n + " bytes from client.");
             } catch (IOException e) {
                 System.err.println("Couldn't read bytes sent from: " + client);
@@ -876,10 +896,10 @@ public class Server {
             String[] parsed = new String[5];
             try {
                 parsed[0] = new String(buffer, 0, 5, "ISO-8859-1");
-                parsed[1] = new String(buffer, 5, 10, "ISO-8859-1").trim();
-                parsed[2] = new String(buffer, 15, 10, "ISO-8859-1").trim();
-                parsed[3] = new String(buffer, 25, 10, "ISO-8859-1");
-                parsed[4] = new String(buffer, 35, 1024, "ISO-8859-1");
+                parsed[1] = new String(buffer, 21, 10, "ISO-8859-1").trim();
+                parsed[2] = new String(buffer, 31, 10, "ISO-8859-1").trim();
+                parsed[3] = new String(buffer, 41, 10, "ISO-8859-1");
+                parsed[4] = new String(buffer, 51, 1024, "ISO-8859-1");
             } catch (UnsupportedEncodingException e) {
                 System.err.println("Encoding specified is unsupported.");
                 e.printStackTrace();
@@ -911,11 +931,13 @@ public class Server {
                 System.exit(1);
             }
             byte[] cipherText = new byte[size];
-            for (int i = 35; i < size + 35; ++i) {
-                cipherText[i - 35] = buffer[i];
+            for (int i = 51; i < size + 51; ++i) {
+                cipherText[i - 51] = buffer[i];
             }
+            byte[] iv = new byte[16];
+            System.arraycopy(buffer, 5, iv, 0, 16);
             byte[] decoded = decrypt(cipherText, clientKeys.get(clientName), 
-                clientIVs.get(clientName));
+                new IvParameterSpec(iv));
             System.out.println("Decoded message: " + new String(decoded));
             return decoded;
         }

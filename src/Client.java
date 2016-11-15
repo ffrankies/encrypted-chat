@@ -435,10 +435,10 @@ public class Client {
         String[] parsed = new String[5];
         try {
             parsed[0] = new String(buffer, 0, 5, "ISO-8859-1");
-            parsed[1] = new String(buffer, 5, 10, "ISO-8859-1").trim();
-            parsed[2] = new String(buffer, 15, 10, "ISO-8859-1").trim();
-            parsed[3] = new String(buffer, 25, 10, "ISO-8859-1");
-            parsed[4] = new String(buffer, 35, 1024, "ISO-8859-1");
+            parsed[1] = new String(buffer, 21, 10, "ISO-8859-1").trim();
+            parsed[2] = new String(buffer, 31, 10, "ISO-8859-1").trim();
+            parsed[3] = new String(buffer, 41, 10, "ISO-8859-1");
+            parsed[4] = new String(buffer, 51, 1024, "ISO-8859-1");
         } catch (UnsupportedEncodingException e) {
             System.err.println("Encoding specified is unsupported.");
             e.printStackTrace();
