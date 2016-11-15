@@ -833,7 +833,7 @@ public class Server {
                         e.printStackTrace();
                         System.exit(1);
                     }
-                    System.arraycopy(encoded, 0, message, 35, encoded.length);
+                    System.arraycopy(encoded, 0, message, 51, encoded.length);
                     try {
                         clientOutputs.get(client).write(
                             message, 0, 1024 + 51);
