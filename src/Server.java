@@ -402,9 +402,9 @@ public class Server {
         // Accepts client connections
         while (true) {
             System.out.println("Waiting for a client to connect.");
-            Socket clientSocket = null;
+            Socket socket = null;
             try {
-                clientSocket = serverSocket.accept();
+                socket = serverSocket.accept();
             } catch (IOException e) {
                 System.err.println("Couldn't accept client socket.");
                 e.printStackTrace();
@@ -422,7 +422,7 @@ public class Server {
                 e.printStackTrace();
                 System.exit(1);
             }
-            ConnectionHandler myHandler = new ConnectionHandler(clientSocket);
+            ConnectionHandler myHandler = new ConnectionHandler(socket);
             Thread thread = new Thread(myHandler);
             myHandler.setThread(thread);
             thread.start();
@@ -571,7 +571,7 @@ public class Server {
                 } else if (command.equals(KICK)) {
                     kick(message, sender, size);
                 } else if (command.equals(EXIT)) {
-                    exit(message, sender);
+                    exit(message, sender, clientSocket);
                     // Completes while loop and ends this thread
                     break;
                 } // if statement
@@ -587,6 +587,14 @@ public class Server {
             //     System.err.println("Couldn't close client socket.");
             //     e.printStackTrace();
             // }
+            try {
+                secretInput.close();
+                input.close();
+            } catch (IOException e) {
+                System.err.println("Couldn't close input streams.");
+                e.printStackTrace();
+                System.exit(1);
+            }
             System.out.println("Client has exited gracefully: " + clientName);
         }
             
@@ -765,7 +773,7 @@ public class Server {
          * @param message is a String containing the exit message
          * @param sender is the name of the source Client
          *********************************************************************/
-        private static void exit(byte[] message, String sender) {
+        private static void exit(byte[] message, String sender, Socket socket) {
             // Confirm to Client that it can disconnect
             try {
                 clientOutputs.get(sender).write(message, 0, 1024 + 35);
@@ -776,24 +784,24 @@ public class Server {
             }
             // Alert other users that client is disconnecting 
             String msg = sender + " has disconnected gracefully.";
+            byte[] decoded = new byte[1024];
+            try {
+                decoded = msg.getBytes("ISO-8859-1");
+                byte[] send = SEND.getBytes("ISO-8859-1");
+                System.arraycopy(send, 0, message, 0, 5);
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
             for (Enumeration<String> clients = clientOutputs.keys(); 
                 clients.hasMoreElements(); ) {
                 String client = clients.nextElement(); 
-                byte[] decoded = new byte[1024];
-                try {
-                    decoded = msg.getBytes("ISO-8859-1");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    System.exit(1);
-                }
                 if (!sender.equals(client)) {
                     //Encode the data
                     byte[] encoded = encrypt(decoded, clientKeys.get(client), 
                         clientIVs.get(client));
                     String size = String.format("%10d", encoded.length);
                     try {
-                        byte[] send = SEND.getBytes("ISO-8859-1");
-                        System.arraycopy(send, 0, message, 0, 5);
                         System.arraycopy(size.getBytes("ISO-8859-1"), 0, 
                             message, 25, 10);
                     } catch (UnsupportedEncodingException e) {
@@ -812,8 +820,9 @@ public class Server {
                 }
             }
             //Close client socket, remove client from maps
+            System.out.println("Closing socket of " + sender);
             try {
-                clientSocket.close();
+                socket.close();
             } catch (IOException e) {
                 System.err.println("Couldn't close client socket.");
                 e.printStackTrace();

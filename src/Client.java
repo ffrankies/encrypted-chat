@@ -238,7 +238,7 @@ public class Client {
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024);
+            output.write(buffer, 0, 1024 + 35);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -278,7 +278,7 @@ public class Client {
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024);
+            output.write(buffer, 0, 1024 + 35);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -318,7 +318,7 @@ public class Client {
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024);
+            output.write(buffer, 0, 1024 + 35);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
@@ -357,7 +357,7 @@ public class Client {
             System.exit(1);
         }
         try {
-            output.write(buffer, 0, 1024);
+            output.write(buffer, 0, 1024 + 35);
         } catch (IOException e) {
             System.err.println("Couldn't send encrypted message.");
             e.printStackTrace();
